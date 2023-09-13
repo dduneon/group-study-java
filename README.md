@@ -24,6 +24,10 @@ Thread, Socket 등 서브 주제들 또한 진행
 
 ## 학습 방법
 
+### Milestone
+
+[https://hollow-decision-0dc.notion.site/NHN-Academy-4-e770dbcc27c643648e891f585d3e7493?pvs=4](https://hollow-decision-0dc.notion.site/NHN-Academy-4-e770dbcc27c643648e891f585d3e7493?pvs=4)
+
 ### Schedule
 
 | 월요일, 수요일 | 화요일, 목요일 | 금요일 |
