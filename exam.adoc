@@ -1,0 +1,44 @@
+= Main Title
+
+
+// 각 세션 넘버
+:sectnums: 
+// 목차를 문서 왼쪽에 표시
+:toc: left 
+:toclevels: 4 
+// 목차 제목
+:toc-title: Table of Contents 
+:source-highlighter: prettify
+
+// 날짜 적기
+2023.09.00
+
+== Sub Ttitle
+=== Sub title1
+=== Sub title2
+=== Sub title3
+=== Sub title4
+// -----------------------------------------
+
+```
+문단 제목
+    문단개요 
+
+```
+
+
+
+CAUTION: 주의사항
+
+
+NOTE: 알림
+
+TIP: 팁
+
+IMPORTANT: 중요
+
+WARNING: 경고
+
+
+
+ 
