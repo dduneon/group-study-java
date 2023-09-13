@@ -1,22 +1,30 @@
-public class CounterThread extends Thread {
+package chap2;
+
+public class CounterRunnable implements Runnable {
+    Thread thread;
     String name;
     int count;
 
-    public CounterThread(String name) {
+    public CounterRunnable(String name) {
+        this.thread = new Thread(this);
         this.name = name;
-        this.count = 1;
+        count = 1;
+    }
+
+    public void start() {
+        this.thread.start();
     }
 
     @Override
     public void run() {
-        Thread.currentThread().interrupt();
         while (!Thread.interrupted()) {
+            System.out.println(name + " : " + count++);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            System.out.println(this.name + " : " + this.count++);
         }
     }
+
 }

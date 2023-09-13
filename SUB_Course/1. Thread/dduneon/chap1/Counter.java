@@ -1,3 +1,5 @@
+package chap1;
+
 public class Counter {
     String name;
     int count;
