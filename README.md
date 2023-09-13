@@ -11,8 +11,11 @@
 MIT 6.005 Course 기반,
 Thread, Socket 등 서브 주제들 또한 진행
 
-> https://www.inf.unibz.it/~calvanese/teaching/04-05-ip/lecture-notes/https://math.hws.edu/javanotes/https://web.mit.edu/6.005/www/fa15/
-> 
+> https://www.inf.unibz.it/~calvanese/teaching/04-05-ip/lecture-notes/
+
+> https://math.hws.edu/javanotes/
+
+> https://web.mit.edu/6.005/www/fa15/
 
 > 이하 과정들에 대한 정리. https://nhnacademy.dooray.com/share/pages/ffwmFIpWQ5Ss7yd43oqXDA
 > 
