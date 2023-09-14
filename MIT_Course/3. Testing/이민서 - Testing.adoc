@@ -1,0 +1,284 @@
+= Reading 3: Testing
+Reference by <https://web.mit.edu/6.005/www/fa15/classes/03-testing/>
+v1.0, 2023-09-14
+
+== Objectives for Today's Class
+* 테스트의 가치를 알고 테스트 우선 프로그래밍을 안다
+* 테스트를 입력과 출력으로 구분하고 좋은 테스트 케이스를 고른다
+* 테스트 적용 범위 측정
+* 언제 블랙박스, 화이트박스 테스트, 단위 테스트와 통합 테스트 그리고 자동화된 회귀 테스트를 사용할지 이해한다
+*** Test Suite : 테스트 하고자 하는 클래스들을 나열
+
+== Validation
+* 목적
+** 프로그램 문제 찾아냄
+** 프로그램 정확성에 대한 확신 높임
+
+* 검증이라고 불리는 프로그램에 대한 형식적 추론
+* Code review 다른 사람이 내코드를 보고 버그를 발견할수 있다
+* Testing 신중하게 입력해 프로그램 실행 결과 확인
+
+최고의 검증을 받더라도 소프트웨어의 완벽한 품질 달성은 어렵다 + 그러므로 테스팅하는것은 프로그램 설계에서 매우 중요하다
+
+== Why Software Testing is Hard
+. 철저한 테스트는 불가
+** 테스트 해야할 범위는 너무 커서 모든 범위를 커버하기 힘들다.
+. 그냥 시도하고 잘 작동하는지 확인하는것은 버그를 발견하기 힘들다
+. 소프트웨어는 무작위, 통계 테스트가 옳지않다
+** 생산 라인의 제조된 제품의 1%를 테스트 (불량품 검사), Z플립 10만번 열고 닫는 검사와 같이 시간을 단축시키는 테스트
+** 소프트웨어는 위 사항이 해당하지 않는다 +
+광범위한 입력 범위에서 괜찮다가 단일 경계지점에서 장애가 발생할수 있다
+
+== Putting on your Testing Hat
+* 프로그램이 작동하지 않게 테스트 하는것도 중요하다
+* 방금 작성한 코드가 가볍게 작동하는 것만을 보기 위해 테스트 하는것은 위험하다 지우는 것을 아까워 하지마라
+* 지우고 고치는걸 두려워하지말고 취약할수있는 모든 부분을 리팩토링해라
+
+== Test-frist Programming
+
+* 단일 함수 개발은 다음과 같은 순서로 진행
+    . 함수의 규격을 작성
+    . 작성한 규격이 실행하는 테스트 작성
+    . 이제 코드가 통과하도록 작성합니다
+* 작성한 규격은 함수의 입출력 동작에 설명
+** parameters의 type과 추가 제약 조건 (``**sqrt**``의 매개변수는 음수가 아니어야 한다.)
+* Test 우선 기법은 규격을 이해하기에 좋은 방법입니다 +
+미리 실패할 test를 작성하면 시간을 낭비하기전에 문제를 조기 발견 가능하다
+
+== Choosing Test Cases by Partitioning
+* 상이한 테스트 사례를 선택후 무작위 테스트로 입력할수 없는 + 공간의 일부를 탐색 함으로 제한된 test 자원을 최대한 활용
+
+**예:** `BigInteger.Multiply()`
+* `BigInteger` 는 범위가 제한된 primitive type +
+ `int`,`long` 과 달리 모든 크기의 정수를 나타내는 java 라이브러리 내장 클래스 +
+ BigInteger는 두개의 BigInteger를 곱하는 메서드 존재
+
+[source, java]
+----
+public BigInteger multiply(BingInteger val)
+
+// for example
+
+BigInteger a = ...;
+BigInteger b = ...;
+BigInteger ab = a.multiply(b);
+----
+* 파라미터는 하나지만 ``multiply``는 실제로 실제로 두 인수의 함수이다
+* `multiply : BigInteger x BigInteger -> BigIntger`
+** 모든 정수쌍은 2차원 입력 공간에 있다 이제 다음과 같이 분할 할수있다
+*** a와 b 둘다 양수
+*** a와 b 둘다 음수
+*** a는 양수 b는 음수
+*** a는 음수 b는 양수
+** 또한 특별한 경우가 있다 : 0, 1, -1
+*** a또는 b는 0, 1 , -1 +
+
+
+* 테스트를 할때 BigInteger가 내부적으로 int나 long으로 표현 가능하다면 그것을 쓰는게 더 빠르니까 +
+그걸 쓰도록 만들어졌다 가정하고 long보다 더 큰 수를 테스트 한다
+** a 또는 b 가 작다
+** a또는 b는 ``Long.MAX_VALUE``보다 큽니다 자바에서 가장 큰 primitive type 정수는 2^63
+
+* (a, b)공간의 모든 관측치를 분할을 하여 a와 b를 독립적으로 나누겠습니다
+
+image::http://web.mit.edu/6.005/www/fa15/classes/03-testing/figures/multiply-partition.png[partitioning multiply,200,200]
+
+* 0
+* 1
+* -1
+* 작은 양의 정수
+* 작은 음의 정수
+* 거대한 양의 정수
+* 거대한 음의 정수
+
+정수 쌍의 공간을 포함하는 7x7=49개 파티션 생성 +
+test suite는 다음과 같다+
+* (a,b) = (-3,25) (small negative, small positive) +
+* (a,b) = (0,30) (0,small positive) +
+* (a,b) = (2^100,1) (large positive, 1) +
+* etc +
+ +
+
+**Example**: `max()` +
+
+[source, java]
+----
+public static int max(int a,int b)
+----
+
+* 수학적으로 이방법은 다음과 같다 +
+`max : int x int -> int` +
+
+다음과 같이 분할이 가능하다 +
+* a < b +
+* a = b +
+* a > b +
+ +
+ **test suite** +
+ * (a,b) = (1,2)   a < b +
+ * (a,b) = (9,9)   a = b +
+ * (a,b) = (-5,-7)   a > b +
+
+
+image::http://web.mit.edu/6.005/www/fa15/classes/03-testing/figures/max-partition.png[partition max,150,150]
+
+== Include Boundaries in the Partition
+* 버그는 위에서 파티션으로 나눈 subdomains 사이의 경계에서 발생
+** 0은 양수와 음수 사이 경계
+** numberic type like `int` `double` 의 최대값과 최소값
+** collectioin type의 비어있는 경우 (빈 문자열, 빈 리스트, 빈 배열)
+** 컬렉션의 처음과 마지막 요소
+
+* bug는 왜 경계에서 자주 발생하는가?
+
+* `< = 대신에 < 또는 counter를 0대신 1로 초기화`
+
+파티션에서 하위 도메인의 경계 포함한다면 다음과 같다 +
+
+* a and b relationship +
+** a < b +
+** a = b +
+** a > b +
+
+* value of a +
+** a = 0 +
+** a < 0 +
+** a > 0 +
+** a = minimum Integer +
+** a = maximum Integer +
+
+* value of b +
+** b = 0 +
+** b < 0 +
+** b > 0 +
+** b = minimum Integer +
+** b = maximum Integer +
+
+== Two Extremes for Covering the Partition
+* input space를 분할하면 test suite를 정확하게 고를수있다
+
+** **Full Cartesian product** +
+모든 test case를 포함 할수도 있고 안할수도 있다
+
+** **Cover each Part** +
+모든 부분은 적어도 하나의 case에 cover되지만
+반드시 모든 조합을 cover하지 않는다 +
+신중하게 고르면 몇가지의 테스트로도 모든 조합을 테스트 가능하다
+
+== Blackbox and Whitebox Testing
+
+* **Blackbox testing**
+** fuction의 implementation이 아니라 sepcifiaction에서 test case찾는다
+** `multiply max` 이 기능들에 대해 실제 코드를 보지 않고 +
+partitioning하고 boundaries 가능
+
+* **Whitebox testing**(also called glass box testing)
+** choose test case - 실제로 구현되는 방법을 알아야함
+** ex) 구현이 입력에 따라 다른 알고리즘 선택하는 경우 해당 도메인에 따라 분할한다 +
+여기서 도메인의 예시로 어떤 함수가 양수와 음수 입력을 다르게 처리한다면 양수 도메인과 음수 도메인으로 테스트 케이스를 나눌수 있다 +
+입력 값의 범위, 유효성의 조건, 경계 조건 등과 같은 여러 도메인 고려 가능
+
+** 화이트박스를 테스트할때 구체적인 specification이 없다면 구현 내부 동작에 의존하게 만들면 안된다. +
+예를들어 specification에서 "입력이 잘못된 형식이면 예외를 던져야 한다"이면 현재 구현에서 어떤 예외를 던지는지 구체적으로 검사 하는게 아니라 어떤 예외가 발생하더라도 처리할수 있는 일반적인 테스트를 만들어야 합니다.
+
+== Coverage
+* test suite ? 테스트 케이스를 모아서 실행하고 code coverage 분석에 사용되는 테스트 그룹 
+
+* Coverage ? 소프트웨어 테스트에서 사용되는 측정 기준 중 하나 +
+코드의 어느 정도가 테스트 되었는지를 나타내는 지표
+
+** **Statement coverage**: 소스 코드의 각 라인이 test suite에서 실행되었는지 여부이다 +
+코드 내의 모든 라인을 테스트 하는 정도
+
+** **Branch coverage**: 코드 내의 조건분기문(if,switch 등)을 모두 고려하여, 각 분기에 대한 실행 여부를 측정합니다. +
+이는 코드 내의 모든 조건문을 테스트 하는 정도
+
+** **Path coverage**: 프로그램의 모든 실행 가능한 경로가 test case에 의해 실행되는 정도 +
+각 경로는 프로그램 시작점 부터 종료점까지의 모든 분기점과 조건문을 따라가는 프로그램 실행 경로를 의미
+
+Statement coverage < Branch coverage < Path coverage +
+
+* statement coverage 100% 달성은 흔한 목표지만 도달하기 어려운 경우가 있다.
+
+* branch coverage 100% 달성은 매우 바람직하며 안전 관련 산업 코드에서는 보다 엄격한 요구사향 적용
+
+* path coverage 100% 달성은 현실적으로 어려우며 지수적으로 큰 tests suite 필요
+
+* 소프트웨어 testing 표준 접근 방식 ?
+** statement coverage를 충족할 때까지 테스트를 추가 +
+이는 프로그램 내의 모든 실행 가능한 statement가 적어도 하나의 테스트 케이스에 의해 실행되어야한다
+
+* green : 실행된 선
+* red : 아직 테스트 되지 않은 라인
+
+== Unit Testing and Stubs
+
+* **Unit Testing** ? 소프트웨어 개발에서 사용되는 테스트 방법중 하나
+
+** 작은 부분을 개별적으로 테스트
+
+** **unit** ? 소프트웨어의 가장 작은 독립적인 부분을 나타냅니다. +
+ex) 함수, 메소드, 클래스 또는 모듈 같은 작은 코드 조각
+
+* **Stubs** ? 유닛 테스트에서 사용되는 개념 
+** 스텁은 유닛 테스트를 수행할 때 특정 유닛이 다른 유닛과 상호 작용할때 대신할 가짜 또는 간단한 버전의 컴포넌트이다 
+** 스텁은 실제 리소스 대신에 테스트 목적으로 만들어진 가짜 객체 또는 함수이다 +
+ex)데이터 베이스 연결을 테스트하는 경우 실제 DB서버 대신 DB스텁을 사용해서 Test (실제 서버를 사용하지 않아도 가능)
+
+* **integration test** ? 유닛테스트의 반대 통합 테스트로 모듈의 조합, 전체 프로그램 테스트
+
+[source, java]
+----
+//웹페이지 컨텐츠 다운로드
+public static String getWebPage(URL url){...}
+
+//페이지를 구성 요소 단어로 분할
+public static List<String> extractWords(String s){...}
+
+//다양한 URL집합을 유닛테스트
+public static Map<String, Set<URL>> makeIndex(Set<URL> urls){
+    ...
+    for(URL url: urls){
+        String page = getWebPage(url);
+        List<String> words = extractWords(page);
+        ...
+    }
+    ...
+}
+----
+
+* `extractWords()` 테스트 케이스를 작성할때 `getWebPage()` 를 호출하지 않고 웹 페이지 내용을 문자열로 저장하고 테스트를 작성하는 것 이 좋다 +
+서로 독립적이어야 버그가 생겼을때 어디에 생긴지 확신할수 있기 때문이다
+
+* `makeIndex()` 의 유닛테스트는 고립시키기 어렵다 왜냐 호출시 내부 코드뿐 아니라 호출하는 모든 메소드의 정확성을 테스트 하기 때문이다 
+
+* 그래서 위 두개의 메서드를 별도로 테스트를 하는 이유이기도 한다. +
+`makeIndex()` 와 같은 더 높은 수준의 모듈을 분리하는 것은 이 모듈이 호출하는 스텁 버전을 작성하는 경우 가능하다 +
+
+* 예를 들어 `getWebPage()` 의 스텁은 인터넷에 접속하지 않고 어떤 URL이 전달 되더라도 가상 웹페이지 내용을 반화한다. +
+클래스의 스텁은 모의 객체 (Mock Object)라고 불린다.
+
+== Automated Testing and Regression Testing
+
+* **Automated Testing** ? 테스트 케이스를 작성하고 실행하는 과정을 컴퓨터 프로그램을 통해 자동으로 수행
+
+* **Regression Testing** ? 소프트웨어를 변경한 후에 변경 사항이 기존 기능에 영향을 미치지 않았는지 확인하기 위한 테스트입니다.
+
+* 두가지 테스트는 거의 항상 같이 사용한다
+
+== Summary
+
+* Test-first programming 코드를 작성하기 전에 테스트 작성
+* 테스트 케이스를 체계적으로 선택하기 위한 파티셔닝 및 경계
+* test suit를 작성하기 위한 화이트 박스 테스트 구문 커버리지
+* 가능한 격리 시켜 모듈을 유닛테스트 한다
+* 자동 회귀 테스트를 통해 버그를 발생하지 않도록 한다.
+
+다음은 우수한 소프트웨어의 세가지 주요 속성
+
+* **버그로부터 안전** 테스트 우선 프로그래밍은 사용자가 버그를 최대한 빨리 잡는것
+
+* **이해하기 쉽다** 테스트 코드 검토 만큼 이것에 도움되는게 없다
+
+* **변화할 준비가 되었다** 사양의 동작에만 의존하는 테스트를 작성함으로 변화에 대한 준비 완료 +
+코드 변경시 버그가 발생하지 않도록 자동 회귀 테스트
