@@ -166,7 +166,7 @@ Bicycle myBike = new Bicycle(); // object creation statement
 
 → 더 세부적인 내용을 보기 위해서는 내부에서 선언한 유형을 보면된다.
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%201.png)
+![Untitled](./image/Untitled%201.png)
 
 **Mutating values vs. reassinging variables**
 
@@ -181,13 +181,13 @@ Bicycle myBike = new Bicycle(); // object creation statement
 
 immutable objects(불변 타입)은 스냅샷 다이어그램에서는 이중테두리로 표시된다.
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%202.png)
+![Untitled](./image/Untitled%202.png)
 
 ****Mutable values****
 
 → `String`과는 다르게 `StringBuilder`은 문자열 변경이 가능한 가변적인 객체이다.
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%203.png)
+![Untitled](./image/Untitled%203.png)
 
 ****Immutable references****
 
@@ -215,27 +215,27 @@ immutable objects(불변 타입)은 스냅샷 다이어그램에서는 이중테
 
 **→ 자바의 `List`는 파이썬의 리스트와 유사하다. List에는 0또는 그 이상의 `object`를 넣을 수 있음**
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%204.png)
+![Untitled](./image/Untitled%204.png)
 
 - **스냅샷 다이어그램에서 List는 인덱스가 있는 객체로 나타낸다.**
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%205.png)
+![Untitled](./image/Untitled%205.png)
 
 **Set**
 
 **→ 자바에서 `Set`는 0또는 그이상의 unique object가 담겨있다. 파이썬의 set과 유사하다.**
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%206.png)
+![Untitled](./image/Untitled%206.png)
 
 - **스냅샷 다이어그램에서 Set는 이름이 없는 필드로 나타낸다.**
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%207.png)
+![Untitled](./image/Untitled%207.png)
 
 **Map**
 
 → 자바의 `Map`은 파이썬의 dictionary와 유사하다. 파이썬처럼 `Key` 값으로 `Value` 값을 찾아냄
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%208.png)
+![Untitled](./image/Untitled%208.png)
 
 - **스냅샷 다이어그램에서는 Map은 키/값 쌍을 포함하는 객체로 표시가 된다.**
 
@@ -304,7 +304,7 @@ List<String> lastNames = new LinkedList<>();
 
 → 자바에서 해시 알고리즘을 이용한 자료 구조는 배열과 연결 리스트로 구현된다.
 
-![Untitled](Basic%20Java%20b4b5f2efcc3d416cbcfeea327954f831/Untitled%209.png)
+![Untitled](./image/Untitled%209.png)
 
 ### TreeSet<E> class
 
