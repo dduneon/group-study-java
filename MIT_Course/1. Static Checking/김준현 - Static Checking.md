@@ -246,7 +246,7 @@ list.size()
   - operation들을 구현하는 구체적인 유형의 클래스
   - `List` 인터페이스의 유일한 구현은 아니다, 하지만 `LinkedList` 는 다르다
 
-![Untitled](./image/jh-1.png)
+![Untitled](./image/dduneon/jh-1.png)
 
 - `List<Integer>` 을 사용하여야 한다
   - `List<int>` 는 사용할 수 없음
