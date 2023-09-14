@@ -156,7 +156,7 @@ Bicycle myBike = new Bicycle(); // object creation statement
 
 → Primitive values는 순수 상수로 표시된다. 화살표는 변수또는 개체값을 참조한다. 
 
-![Untitled](../image/Untitled.png)
+![Untitled](./image/Untitled.png)
 
 ****Object values****
 
