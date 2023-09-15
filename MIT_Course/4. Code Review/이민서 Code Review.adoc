@@ -1,0 +1,326 @@
+= Readubg 4: Code Review
+Reference by <http://web.mit.edu/6.005/www/fa15/classes/04-code-review/>
+v1.0, 2023-09-15
+
+== Objectives for Today's Class
+* **code review**: 누군가의 코드를 읽고 논의한다
+* **general principles of good coding(좋은 코드의 일반적 원칙)**: 프로그래밍 언어나 목적에 관계없이 모든 코드 리뷰에서 코드리뷰에서 찾을수 있다
+
+== Code Review
+* 코드 리뷰는 코드 작성자가 아닌 사람들이 분석하는 것
+
+* 코드 리뷰의 두가지 목적
+    . **코드 개선**: 버그 찾기, 발생가능 버그 예측, 코드 명확성 확인, 프로젝트 스타일 표준과 일치하는지 확인
+
+    . **프로그래머 개선**: 프로그래머들이 서로 배우고 가르치는 중요한 방법, 새로운 기술에 대해 배울수있다
+
+=== Style Standards
+* 일반적인 회사와 대규모 프로젝트는 각각 코드 스타일 가이드라인이 있다
+
+== Smelly Example #1
+
+* "악취"는 제거해야 할 나쁜 코드
+
+[source, java]
+----
+public static int dayOfYear(int month, int dayOfMonth, int year) {
+    if (month == 2) {
+        dayOfMonth += 31;
+    } else if (month == 3) {
+        dayOfMonth += 59;
+    } else if (month == 4) {
+        dayOfMonth += 90;
+    } else if (month == 5) {
+        dayOfMonth += 31 + 28 + 31 + 30;
+    } else if (month == 6) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31;
+    } else if (month == 7) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30;
+    } else if (month == 8) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31;
+    } else if (month == 9) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31;
+    } else if (month == 10) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30;
+    } else if (month == 11) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
+    } else if (month == 12) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 31;
+    }
+    return dayOfMonth;
+}
+----
+
+== Don't Repeat Yourself
+* 코드가 중복되는것은 좋지 않다, 두개의 동일 코드에 문제가 있을경우 한곳에서 수정해도 다른곳에서는 수정이 되지 않는다.
+
+* 중복은 피하라, 복사 붙여넣기는 길수록 독이다.
+
+== Comments Where Needed
+
+* 코드에 댓글을 달고 좋은 코멘트를 수용하면 버그로부터 안전하고 수정할줄 알아야한다
+
+* Javadoc
+** 메소드 위 또는 클래스 위에 동작과 스펙을 기록
+** `/** */` 시작과 끝 `@param, @return` 방법에 있어서 다음과 같다
+
+[source, java]
+----
+/**
+ * hailstone sequence를 계산.
+ * 참고 http://en.wikipedia.org/wiki/Collatz_conjecture#Statement_of_the_problem
+ * @param n 부터 시작 (n > 0).
+ * @return hailstone sequence은 n부터 시작해 1로 끝난다.
+ * 예를 들어, hailstone(3)=[3,10,5,16,8,4,2,1].
+ *
+ */
+ public static List<Integer> hailstoneSequence(int n){
+    ...
+ }
+----
+
+* 다른곳의 코드를 변경하거나 복사해서 사용할때는 출처를 명시하기
+
+[source, java]
+----
+// 웹페이지를 문자열로 읽어온다.
+//  see http://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code
+String mitHomepage = new Scanner(new URL("http://mit.edu").openStream(),"UTF-8").userDelimiter("\\A").next();
+----
+
+* 출처를 문서화 하는 이유는 저작권 침해를 피하기 위해서이다
+
+* 몇몇 comment는 불필요하다
+** 예를들어 코드를 옆에 영어로 설명하는것은 이해력 향상에 도움이 없다 왜냐 읽는 사람이 최소한 자바를 알아야 한다고 가정하기 때문
+
+[source,java]
+----
+while(n != 1){ // test whether n is 1 (don't write comments like this)
+    ++i; // increment i
+    l.add(n); // add n to l
+}
+----
+
+* 하지만 모호한 코드는 comment를 달아야한다
+
+[source, java]
+----
+sendMessage("as you wish"); // this is basically says "I love you"
+----
+
+== Fail Fast
+
+* 빠른 실패는 빠르게 버그를 찾을수있다
+
+* `dayOfYear` 함수는 빠르게 실패하지 않는다 왜냐 조용히 오답을 반환하기 때문 오류가 뜨지 않는다 +
+정적 검사 또는 동적 검사와 같은 더 많은 검사 필요
+
+== Avoid Magic Numbers
+
+* **what is Magic Numbers** ? 프로그램 코드 내에 하드 코딩된 숫자 또는 리터럴 값 , 특정한 의미나 목적없이 직접 사용된 숫자 +
+이는 코드의 가독성 저하 및 유지보수가 어렵다
+
+[source, java]
+----
+/**
+ * ex) using Magic Number.
+ * @param double 반지름
+ * @return 원 넓이 반환
+ */
+double calculateCircleArea(double radius){
+    return 3.1415926539 * radius * radius;
+}
+
+/**
+ * ex) using constant.
+ *
+ */
+public static final double PI = 3.14159265359;
+
+double calculateCircleArea(double radius){
+    return PI * radius * radius;
+}
+----
+
+== One Purpose For Each Variable
+
+* Don't reuse ``parameters``, and don't reuse ``variables``
+
+* **parameter and variables** 의 재사용을 피한다.
+
+** 프로그래밍에서 변수는 제한된 자원이 아닙니다 따라서 변수를 자유롭게 도입하고 의미 있는 이름을 부여한다.
+
+** 변수가 더이상 필요하지 않다면 사용을 중단
+
+* **parameter** 수정을 피해야한다.
+
+** `final` 키워드 사용하는것이 좋다 , java 컴파일러에서 정적으로 확인한다.
+
+[source, java]
+----
+//for example
+public static int dayOfYear(final int month,final int dayOfMonthm, final int year){...}
+----
+
+== Smelly Example #2
+
+* ``dayOfYear``에 잠재적 버그가 있다 그것은 윤년 처리를 안한것
+
+[source, java]
+----
+//이 코드 또한 magic number가 너무 많다
+public static boolean leap(int y) {
+    String tmp = String.valueOf(y);
+    if (tmp.charAt(2) == '1' || tmp.charAt(2) == '3' || tmp.charAt(2) == 5 || tmp.charAt(2) == '7' || tmp.charAt(2) == '9') {
+        if (tmp.charAt(3)=='2'||tmp.charAt(3)=='6') return true; /*R1*/
+        else
+            return false; /*R2*/
+    }else{
+        if (tmp.charAt(2) == '0' && tmp.charAt(3) == '0') {
+            return false; /*R3*/
+        }
+        if (tmp.charAt(3)=='0'||tmp.charAt(3)=='4'||tmp.charAt(3)=='8')return true; /*R4*/
+    }
+    return false; /*R5*/
+}
+----
+
+== Use Good Names
+
+* 좋은 메소드와 변수는 이름이 길고 자신을 설명한다. +
+주석을 피할수 있는 경우가 많다
+
+For example
+
+[source, java]
+----
+int tmp = 86400;  // tmp is the number of seconds in a day (don't do this!)
+
+int secondsPerDay = 86400;
+----
+
+* `tmp`,`temp`, 그리고 `data` 와 같은 변수 이름 보단 명확하게 읽히도록 더 길고 설명적인 이름 사용
+
+* Java에서의 변수와 메서드 명명 규칙
+
+** 클래스 이름은 대문자 , CamelCase 사용
+** 변수 이름은 소문자 , CamelCase사용
+** 상수는 모두 대문자, 단어 사이를 언더스코어(_)로 구분
+** 패키지 이름은 모두 소문자 , 동사 구문 사용
+** 변수와 클래스 이름은 주로 명사 구문 사용, 짧고 명확한 단어 선택하되, 약어는 피한다.
+
+* 따라서 `leap`메서드와 해당 지역 변수의 이름을 개선한다면 `isLeapYear` 또는 `year` 로 개선할수 있다.
+
+== Use Whitespace to Help the Reader
+
+* **일관된 들여쓰기 사용**: 코드 내 들여쓰기는 일관되게 사용. 가독성 높아짐
+
+* **코드 라인 내 공백 사용**: 코드 라인 내에 공백을 적절하게 사용. 가독성 높아짐
+
+* **탭 문자 대신 공백 문자 사용**: 코드 들여쓰기에 탭 문자 대신 공백을 사용. 탭 문자는 다양한 툴에서 다르게 처리되며 이로 인해 일관성이 사라질수 있다 
+
+** 코드 편집기 사용시 tab을 눌러도 공백 문자가 삽입되도록 설정한다
+
+== Smelly Example #3
+
+[source, java]
+----
+public static int LONG_WORD_LENGTH = 5;
+public static String longestWord;
+
+public static void countLongWords(List<String> words) {
+   int n = 0;
+   longestWord = "";
+   for (String word: words) {
+       if (word.length() > LONG_WORD_LENGTH) ++n;
+       if (word.length() > longestWord.length()) longestWord = word;
+   }
+   System.out.println(n);
+}
+----
+
+* 주어진 코드에서 ``final``키워드를 ``words``변수에 추가하면 다음과 같은 결과 발생
+
+    . **words변수**
+    ** ``words`` 변수에 ``"final"`` 키워드를 추가하면 해당 변수는 재할당할 수 없는 상수가 됩니다. 즉, 다른 ``List`` 객체를 ``words`` 변수에 할당하거나 재할당할 수 없습니다.
+
+    ** 그러나 중요한 점은 ``"final"`` 키워드가 ``words`` 변수가 참조하는 ``List`` 객체를 불변으로 만들지 않습니다. 따라서 ``List`` 객체 내의 요소를 변경할 수는 있습니다.
+
+    . **불변성과 가변성**:
+    ** 이것은 중요한 차이점을 나타냅니다. ``"final"`` 키워드가 변수를 불변으로 만드는 것이 아니라 변수의 참조를 불변으로 만듭니다. 따라서 ``words`` 변수가 참조하는 ``List`` 객체는 여전히 가변(mutable)할 수 있으며, 리스트 내의 요소를 변경할 수 있습니다.
+
+[source, java]
+----
+words.add("newWord"); // 여전히 작동한다.
+----
+
+* **이런 미묘한 차이로 ``final``키워드를 사용해 변수를 불변으로 만드는것과 객체를 불변으로 만드는 것은 다르다.**
+
+== Don't Use Global Variables
+* **what is Global Variables** ?
+** 이름이 바뀔수 있는 변수
+** 프로그램 어디에서나 변경이 가능하고 접근성이 좋다
+
+* 자바에서 전역 변수는 `public static` 으로 선언
+``public``이 어디서든 접근 가능하게 하고 ``static``은 싱글 인스턴스를 의미
+
+* **매개변수와 반환값 사용**: 메서드 간에 데이터 전달할때 메서드의 매개변수로 전달하고 메서드가 필요한 결과를 반환값으로 반환
+
+* **객체 내 변수 사용**: 관련된 데이터를 객체 내에 캡슐화한다, 해당 객체의 메서드를 호출하여 데이터를 조작하거나 변경. +
+가독성과 유지보수성 향상
+
+== Methods Should Return Results, not Print Them
+
+* ``countLongWords``메서드는 결과를 콘솔에 출력하는 역할을 수행. 이것은 결과를 사람이 읽기 위한게 아니라 다른 계산과 연결하여 사용하려면 해당 메서드를 다시 작성.
+
+    . ``countLongWords``메서드를 수정하여 결과를 수정하도록 변경
+    . `System.out.println(n);` 을 사용하여 콘솔에 출력하지만, 대신 `return n;` 을 사용하여 결과 반환
+    . 이제 `countLongWords` 메서드를 호출한 곳에서는 반환된 값을 변수에 저장하거나 다른 계산에 직접 사용 가능
+
+예를 들어 다음과 같이 변경 가능
+
+[source, java]
+----
+public static int countLongWords(List<String> words){
+    int n = 0;
+    for(String word : words){
+        if(word.length() > LONG_WORD_LENGTH) ++n;
+    }
+    return n; // 결과를 반환
+}
+
+//다음과 같이 메서드를 호출한 곳에서 반환된 값 사용
+int numberOfLongWords = countLongWords(wordList);
+----
+
+== Summary
+
+* 코드 리뷰는 사람에 의한 소프트웨어 품질 향상 기법
+
+** 반복하지 않기(**DRY**)
+** 필요한 경우 comment
+
+** Fail fast
+** magic numbers 피하기
+** 각각 변수에 대한 한가지 목적
+** 좋은 이름 사용
+** 전역변수 NO
+** results값 반환 , print 금지
+** 가독성을 위해 공백 사용
+
+* 오늘 주제는 좋은 소프트웨어의 세가지 주요 속성과 연결
+. **Safe from bugs**
+** DRY 코드를 사용하면 한곳에서만 버그 수정 가능
+** 가정을 comment하면 다른 프로그래머가 버그를 만들 가능성이 적어짐
+** Fail Fast는 버그를 가능한 빨리 탐지
+** 전역 변수를 피하면 제한된 위치에서만 로컬 변수를 변경가능하기에 변수 값과 관련된 버그가 수월하다
+
+. **Easy to understand**
+** 코드 리뷰는 다른 사람들이 코드를 읽고 이해하려 노력하기에 모호하거나 혼란스런 코드를 찾는 유일한 방법
+** 시중하게 comment 사용
+** magic number 피하고, 변수마다 하나의 목적 유지, 좋은 이름 사용, 공백을 잘 사용하자
+
+. **Ready for change**
+** 코드 리뷰는 무엇이 바뀔지 예측하고 그 대안을 제안할수 있는 숙련된 개발자가 수행할때 도움이 된다.
+** DRY 코드는 한곳에서만 변경함으로 변경 준비가 더 잘 되어있다.
+** 결과를 print보다 result 하는것이 새로운 목적에 더욱 쉽게 적용 가능
