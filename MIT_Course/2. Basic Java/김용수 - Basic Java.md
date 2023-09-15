@@ -46,9 +46,9 @@ int n = i ++ & 5;
 ```
 
 1. **위에서 a 값을 반전하기 위해서 어떤 연산자를 사용해야하는가? !**
-2. **두 값을 비교하는 데 사용되는 연산자는 무엇입니까? ==**
+2. **두 값을 비교하는 데 사용되는 연산자는 무엇입니까? ==** 
 
-3. **다음 코드를 해석하세요**
+1. **다음 코드를 해석하세요**
 
 ```java
 result = someCondition ? value1 : value2 ;
@@ -67,7 +67,7 @@ if(someCondition == true){
 class ArithmeticDemo {
 
      public static void main (String[] args){
-
+          
           int result = 1 + 2; // result is now 3
           System.out.println(result);
 
@@ -102,7 +102,7 @@ class PrePostDemo {
         int i = 3;
         i++;
         System.out.println(i);    // "4"
-        ++i;
+        ++i;                     
         System.out.println(i);    // "5"
         System.out.println(++i);  // "6"
         System.out.println(i++);  // "6" -> Postfix 연산자이므로 6이 출력된 후 1이 증가
@@ -115,17 +115,17 @@ class PrePostDemo {
 
 **Questions and Exercises: Expressions, Statements, and Blocks**
 
-1. **연산자는 값을 계산하는 \_\_\_\_를 구축하는데 사용될 수 있다. - Expression**
-2. **Expression는 \_\_\_\_의 핵심 구성요소이다. - Statement**
-3. **Statement는 \_\_\_\_의 그룹이다. - blocks**
-4. **이 코드는 \_\_\_Expression의 예시이다. - compound**
+1. **연산자는 값을 계산하는 ____를 구축하는데 사용될 수 있다. - Expression**
+2. **Expression는 ____의 핵심 구성요소이다. - Statement**
+3. **Statement는 ____의 그룹이다. - blocks**
+4. **이 코드는 ___Expression의 예시이다. - compound**
 
 ```java
 1 * 2 * 3;
 ```
 
-1. **Statement는 자연어문장과 거의 동일하지만 마침표로 끝나는 대신 \_\_\_로 끝난다. - semicolon(;)**
-2. **Block는 균형잡힌 \_\_\_\_ 사이에 있는 0개 혹은 그 이상의 statements 모음이며 단일 명령문이 허용되는 모든 곳에서 사용할 수 있다. → () (braces)**
+1. **Statement는 자연어문장과 거의 동일하지만 마침표로 끝나는 대신 ___로 끝난다. - semicolon(;)**
+2. **Block는 균형잡힌 ____ 사이에 있는 0개 혹은 그 이상의 statements 모음이며 단일 명령문이 허용되는 모든 곳에서 사용할 수 있다. → () (braces)**
 
 ```java
 double aValue = 8933.234; // assignment statement
@@ -138,7 +138,7 @@ Bicycle myBike = new Bicycle(); // object creation statement
 
 ## Snapshot diagrams
 
-→ 애매한 질문을 이해하기 위해서 런타임에 일어나는 일을 그리는데 유용하다.
+→ 애매한 질문을 이해하기 위해서  런타임에 일어나는 일을 그리는데 유용하다.
 
 - `Snapshot diagrams` 은 런타임 중 내부 상태를 표시한다.
 
@@ -149,55 +149,84 @@ Bicycle myBike = new Bicycle(); // object creation statement
 **6.005에서 스냅샷 다이어그램을 사용하는 이유**
 
 1. 그림을 통해 서로 이야기하기 위해서
-2. Primitive type과 object의 유형, 불변 값과 불변 참조, 추상화 등 개념을 설명을 쉽게 하기 위해
+2. `Primitive type`과 `object`의 유형, 불변 값과 불변 참조, 추상화 등 개념을 설명을 쉽게 하기 위해
 3. 등등
 
 **Primitive values**
 
-→ Primitive values는 순수 상수로 표시된다. 화살표는 변수또는 개체값을 참조한다.
+→ Primitive values는 순수 상수로 표시된다. 화살표는 변수또는 개체값을 참조한다. 
 
 ![Untitled](./image/kys1651/Untitled.png)
 
-\***\*Object values\*\***
+****Object values****
 
-→ Object value는 원에 감싸져서 표시가 된다.
-
-→ 만약 좀 더 세부적인 것을 알고 싶다면 내부 이름을 보면된다.
-
-→ 더 세부적인 내용을 보기 위해서는 내부에서 선언한 유형을 보면된다.
+- Object Value는 원에 감싸져서 표시가 된다.
+- 더 세부적인 것을 알고 싶다면 내부 이름을 넣는다.
+- 좀 더 세부적인 내용을 보기 위해서는 내부에서 선언한 유형을 넣는다.
 
 ![Untitled](./image/kys1651/Untitled%201.png)
 
-**Mutating values vs. reassinging variables**
+**Mutating values vs. reassigning variables**
+
+`**Mutating values**` : 변경되는 값
+
+`**reassigning variables**` : 변수 재할당
 
 **→ 스냅샷 다이어그램은 변수를 바꾸는 것과 변수의 값을 바꾸는 것의 구분을 시각화해준다.**
 
 - 만약 변수나 필드에 할당한다면 변수의 화살표는 다른 값을 가르킨다.
 - 배열이나 목록 같은 변경 가능한 값의 내용에 할당하면 내부의 참조값이 바뀐다.
 
-\***\*Reassignment and immutable values\*\***
+****Reassignment and immutable values****
 
-→ `String` 은 불변 타입이다. 즉, 값이 생성되면 절대 변경할 수 없는 유형임
+→ `**String**` 은  불변 타입이다. 즉, 값이 생성되면 절대 변경할 수 없는 유형임
 
-immutable objects(불변 타입)은 스냅샷 다이어그램에서는 이중테두리로 표시된다.
+> **문자열 상수 풀(String Constant Pool)**
+> 
+- **자바에서는 `문자열 상수 풀` 또는 `문자열 풀`이라고 불리는 특수한 저장 공간이 있음**
+- **문자열 상수풀은 `힙 영역`에 존재하는 특수한 공간으로 문자열 리터럴을 저장하는 용도로 사용**
+- **문자열 리터럴이 생성될 때마다 JVM은 해당 문자열이 상수 풀에 존재하는지 확인한다.**
+- **존재하지 않으면 저장하고 존재하면 저장하지 않고 가르킨다.**
+- **만약 `new` 키워드를 사용해서 생성한다면 상수 풀이 아니라  힙 영역에 생성된다.**
+
+**→ `문자열 상수 풀` 을 통해 동일한 문자열이 존재 할 경우 생성하지 않으므로 메모리 공간을 절약한다.**  
+
+**→ Question !** 
+
+```java
+List<String> list1 = new ArrayList<>();
+list1.add("String");
+list1.add("String");
+
+System.out.println(list1.get(0) == list1.get(1));
+
+List<String> list2 = new ArrayList<>();
+list2.add(new String("String"));
+list2.add(new String("String"));
+System.out.println(list2.get(0) == list2.get(1));
+
+// 답은 뭐가 나올까?
+```
+
+**immutable objects(불변 타입)은 스냅샷 다이어그램에서는 이중테두리로 표시된다.**
 
 ![Untitled](./image/kys1651/Untitled%202.png)
 
-\***\*Mutable values\*\***
+****Mutable values****
 
-→ `String`과는 다르게 `StringBuilder`은 문자열 변경이 가능한 가변적인 객체이다.
+→ `**String**`과는 다르게 `**StringBuilder**`은 문자열 변경이 가능한 가변적인 객체이다.
 
 ![Untitled](./image/kys1651/Untitled%203.png)
 
-\***\*Immutable references\*\***
+****Immutable references****
 
 **→ 자바에서는 또한 immutable references를 지원한다. 한번 할당하면 다시 재 할당 할 수 없다. `final`이라는 키워드를 사용한다.**
 
-**→ `final`이라는 키워드를 사용한 변수에 한번 더 할당하게 된다면 컴파일에러가 발생한다. 즉 , 자바에서 static checking를 지원해준다.**
+**→ `final`이라는 키워드를 사용한 변수에 한번 더 할당하게 된다면 컴파일에러가 발생한다. 즉 , 자바에서 `static checking`를 지원해준다.**
 
 - **스냅샷 다이어그램에서는 final value는 이중화살표로 표시된다.**
 
-**→ `immutable reference`일지라도 `mutable value`를 가질 수 있다.(ex. final StringBuilder sb)**
+**→ `immutable reference`일지라도 `mutable value`를  가질 수 있다.(ex. final StringBuilder sb)**
 
 **→ 또한 `mutable reference`일지라도 `immutable value`를 가질 수 있음(ex. String)**
 
@@ -217,13 +246,13 @@ immutable objects(불변 타입)은 스냅샷 다이어그램에서는 이중테
 
 ![Untitled](./image/kys1651/Untitled%204.png)
 
-- **스냅샷 다이어그램에서 List는 인덱스가 있는 객체로 나타낸다.**
+- **스냅샷 다이어그램에서 `List`는 인덱스가 있는 객체로 나타낸다.**
 
 ![Untitled](./image/kys1651/Untitled%205.png)
 
 **Set**
 
-**→ 자바에서 `Set`는 0또는 그이상의 unique object가 담겨있다. 파이썬의 set과 유사하다.**
+**→ 자바에서 `Set`는 0또는 그이상의 unique object(중복x)가 담겨있다. 파이썬의 set과 유사하다.**
 
 ![Untitled](./image/kys1651/Untitled%206.png)
 
@@ -241,7 +270,7 @@ immutable objects(불변 타입)은 스냅샷 다이어그램에서는 이중테
 
 **Generics: declaring List, Set, and Map variables**
 
-**→ 파이썬과 달리 자바는 Collections에 들어가는 object를 제한할 수 있음 Item을 넣을 때 컴파일러가 static checking를 하면서 적절한 타입이 들어가는지 검사한다.**
+**→ 파이썬과 달리 자바는 Collections에 들어가는 object를 제한할 수 있음  Item을 넣을 때 컴파일러가 static checking를 하면서 적절한 타입이 들어가는지 검사한다.**
 
 ```java
 List<String> cities;        // a List of Strings
@@ -249,9 +278,13 @@ Set<Integer> numbers;       // a Set of Integers
 Map<String,Turtle> turtles; // a Map with String keys and Turtle values
 ```
 
-wraper types를 collections에서 사용하기 쉽게 만들기 위해서 자동으로 변환해준다.
+- W**raper Types를 Collections에서 사용하기 쉽게 만들기 위해서 자동으로 변환해준다. → 자바 5 때 나옴**
 
-만약 `List<Integer> sequence` 로 선언했다면
+`**Boxing` : Primitive → Wrapper**
+
+`**Unboxing` : Wrapper → Primitive**
+
+**만약 `List<Integer> sequence` 로 선언했다면**
 
 ```java
 sequence.add(5);              // add 5 to the sequence
@@ -263,9 +296,11 @@ int second = sequence.get(1); // get the second element
 
 **→ 자바는 type을 구별하는 것을 도와준다. 무엇을 할지는 구현을 통해서 한다.**
 
-- `**List`, `Set`, `Map` 모두 인터페이스이다. 무엇을 작동해야하는지를 정의하지만 코드를 제공해주지 않는다.\*\*
+- `**List`, `Set`, `Map` 모두 인터페이스이다. 무엇을 작동해야하는지를 정의하지만 코드를 제공해주지 않는다.**
 
-List를 구현하는 방법
+**→ 이를 통해 적절한 상황에서 다르게 구현함으로서 잠재적인 이익을 얻을 수 있음**
+
+**List를 구현하는 방법**
 
 ```java
 List<String> firstNames = new ArrayList<String>();
@@ -275,9 +310,9 @@ List<String> firstNames = new ArrayList<>();
 List<String> lastNames = new LinkedList<>();
 ```
 
-**→ `ArrayList` 와 `LinkedList` 모두 `List`를 구현하는 것이므로 List와 같은 작동을 한다. 그리고 List에 명시된대로 작동해야한다. 예를 들어 `firstNames`와 `lastName`는 같은 방식으로 작동하기 때문에 `ArrayList`와 `LinkedList`를 반대로 넣어주어도 코드는 작동한다.**
+**→ `ArrayList` 와 `LinkedList` 모두 List를 구현하는 것이므로 List와 같은 작동을 한다. 그리고 List에 명시된대로 작동해야한다. 예를 들어  firstName와 lastName는 같은 방식으로 작동하기 때문에 `ArrayList`와 `LinkedList`를 반대로 넣어주어도 코드는 작동한다.**
 
-→ 성능을 신경써야하지만 헷갈릴 경우 ArrayList를 넣어야한다.
+**→ 성능을 신경써야하지만 헷갈릴 경우 ArrayList를 넣어야한다.**
 
 <aside>
 💡 **`ArrayList`는 배열 형태로 구성되어 데이터 검색시 유리함**
@@ -293,14 +328,14 @@ List<String> lastNames = new LinkedList<>();
 
 **→ `HashSet`은 `Set` 의 기본 선택이다.**
 
-**→ `Set`에는 또한 정렬된 sets형태인 TreeSet도 제공한다.**
+**→ `Set`에는 또한 정렬된 set형태인 TreeSet도 제공한다.**
 
 ### HashSet<E> class
 
-- 가장 많이 사용하는 Set 클래스
-- 해시 알고리즘을 사용하여 검색속도가 매우 빠름
+- 가장 많이 사용하는 `**Set**` 클래스
+- `**해시 알고리즘**`을 사용하여 검색속도가 매우 빠름
 
-`**해시 알고리즘(hash algorithm)` : 해시 함수를 사용하여 데이터를 해시 테이블에 저장하고 그것을 다시 검색하는 알고리즘\*\*
+`**해시 알고리즘(hash algorithm)` : 해시 함수를 사용하여 데이터를 해시 테이블에 저장하고 그것을 다시 검색하는 알고리즘**
 
 → 자바에서 해시 알고리즘을 이용한 자료 구조는 배열과 연결 리스트로 구현된다.
 
@@ -313,8 +348,8 @@ List<String> lastNames = new LinkedList<>();
 
 **→ HashSet과 TreeSet의 차이점**
 
-- Set이란 순서가 없는 집합체이며, 중복을 허용하지 않음
-- `TreeSet`은 `HashSet`과 다르게 그 값이 정렬되어 저장된다. → 그렇기 때문에 `HashSet`보다 속도가 느림
+- `**Set`이란 순서가 없는 집합체이며, 중복을 허용하지 않음**
+- `**TreeSet`은 `HashSet`과 다르게 그 값이 정렬되어 저장된다. → 그렇기 때문에 `HashSet`보다 속도가 느림**
 
 **Map의 기본 선택은 HashMap이다.**
 
@@ -342,7 +377,7 @@ for (int num : numbers) {
 }
 ```
 
-Map은 keySet()을 받아와서 for문을 돌 수 있다.
+- **Map은 keySet()을 받아와서 for문을 돌 수 있다.**
 
 **ex) Map**
 
@@ -358,19 +393,19 @@ for (String key : turtles.keySet()) {
 
 → 자바에는 방대한 양에 유용한 API을 찾을 수 있다.
 
-`**API` : Application Programming interface 이다.\*\*
+`**API` : Application Programming interface 이다.**
 
-- `**java.lang.String` : String의 풀네임이다. 우리는 String type를 단지 `“double quotes”`를 통해 만들 수 있다.\*\*
-- `**java.lang.Integer` : 기본 wrapped 클래스이다. 자바는 대부분 상황에서 자동으로 primitive를 wrapper클래스로 감싸준다.(boxed)\*\*
-- `**java.util.List`: 파이썬 리스트와 비슷하다. 파이썬에서는 언어의 일부이지만 자바는 구현됨\*\*
-- `**java.util.Map`: 위와 같음\*\*
-- `**java.io.File` : 디스크의 파일을 나타냄. 파일을 읽을 수 있는지 확인하고 파일을 삭제하고 마지막 수정일자를 확인 할 수 있음\*\*
-- `**java.io.FileReader` : 텍스트 파일을 읽을 수 있음\*\*
-- `**java.io.BufferedReader` : 텍스트를 효율적으로 읽을 수 있으며 한번에 한 줄 읽는 기능도 제공한다.\*\*
+- `**java.lang.String` : String의 풀네임이다. 우리는 String type를 단지 `“double quotes”`를 통해 만들 수 있다.**
+- `**java.lang.Integer` : 기본 wrapped 클래스이다. 자바는 대부분 상황에서 자동으로 primitive를 wrapper클래스로 감싸준다.(boxed)**
+- `**java.util.List`: 파이썬 리스트와 비슷하다. 파이썬에서는 언어의 일부이지만 자바는 구현됨**
+- `**java.util.Map`: 위와 같음**
+- `**java.io.File` : 디스크의 파일을 나타냄. 파일을 읽을 수 있는지 확인하고 파일을 삭제하고 마지막 수정일자를 확인 할 수 있음**
+- `**java.io.FileReader` : 텍스트 파일을 읽을 수 있음**
+- `**java.io.BufferedReader` : 텍스트를 효율적으로 읽을 수 있으며 한번에 한 줄 읽는 기능도 제공한다.**
 
 → 자바 API에 포함된 것
 
-- **The method signature: 리턴 타입, 메소드 이름, 그리고 파라미터를 확인 할 수 있다. 또한 발생하는 예외 또한 발견 할 수 있다.**
+- **The method signature: 리턴 타입, 메소드 이름, 그리고 파라미터를 확인 할 수 있다. 또한 발생하는 예외 또한 발견 할 수 있다. →** 💡 **리턴 타입은 메서드 시그니처에 포함이 안됨**
 - **The description: API 설명서**
 - **Parameters : 메소드 인자에 대한 설명**
 - **마지막으로 리턴타입에 대한 설명**
