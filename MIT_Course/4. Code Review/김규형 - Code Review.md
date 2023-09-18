@@ -264,7 +264,7 @@ public static void countLongWords(List<String> words) {
 - `public` , `static` 이 자바의 전역 변수
 - 전역변수를 사용하기 보단 return values를 사용 또는 메소드를 호출하는 객체를 사용
 - 변수를 상수( `final` )로 사용하는 것은 전역변수의 위험을 일부 피할 수 있다.
-- 위의 code에서는 `n` 과 `LONG_WORD_LENGTH` , `word` 가 상수화 가능
+- 위의 code에서는`LONG_WORD_LENGTH` , `word` 가 상수화 가능
     - 변수가 재할당 되지 않음 → 즉 상수화 가능
 - 반복문 내에서 재 할당이 이뤄지는 `longestWord` 등은 상수화 불가능
 
