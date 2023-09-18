@@ -1,0 +1,292 @@
+= Readubg 5: Version Control
+Reference by <http://web.mit.edu/6.005/www/fa15/classes/05-version-control/>
+v1.0, 2023-09-18
+
+== Objectives
+* 버전 컨트롤이 무엇이고 어떻게 사용하는지
+* 깃 버전 저장을 그래프로 어떻게 저장하는지
+* 버전 기록을 읽고 만들고 사용하는 연습
+
+== 당신이 이미 사용해본 버전 컨트롤 시스템
+* Dropbox
+* Undo/redo buffer (`command + z` , `command + shift + z`)
+* 버전 숫자를 매긴 복사한 파일
+
+image::https://theorydb.github.io/assets/img/fun/final-real.jpg[version number]
+
+== Inventing version control
+
+앨리스는 프로젝트에 대한 버전 관리를 구현하고자 하는 프로그래머이다. +
+처음엔 "Hello.1.java", "Hello.2.java" 및 "Hello.java"와 같은 백업 파일 이름을 사용하여 필요한 경우 이전 버전으로 돌아갈 수 있게 됩니다. +
+
+그후에는 클라우드 저장소를 이용하였다 하지만 조심하지 않으면 변경 사항을 덮어 쓸수 있었다 +
+
+예를 들어 노트북(5L)에서 "버전 5"에서 작업을 시작하고 나중에 데스크톱(5D)에서 작업하고 동기화하지 않고 작업하는 경우, 이후 클라우드에 5D를 업로드하고 나중에 다시 노트북으로 동기화하면 5L을 덮어쓸 수 있습니다. 이를 피하기 위해 이 두 버전을 새로운 "버전 5"로 병합할 방법이 필요하다
+
+* 엘리스의 버전 관리 시스템은 다음과 같은 작업을 포함
+
+. **reverting to a past version** : 이전 버전을 작업 디렉토리로 복사하여 검색 및 사용 가능
+. **comparing two different versions** : 버전 간의 텍스트 차이를 비교 가능
+. **pushing full version history to another location** : 백업을 유지하고 기기 간에 쉽게 코드 전송을 위해 코드를 클라우드에 업로드
+. **pulling history back from that location** : 클라우드에서 코드를 다운로드하여 다른 기기에서 작업 가능
+. **merging versions that are offshoots of the same earlier version** : 동기화 할때 다른 작업을 덮어쓰지 않기 위해 다른 기기에서 수행한 변경 사항을 병합하기 위한 메커니즘 필요
+
+== Multiple developers
+
+* 앨리스와 밥은 서로 다른 컴퓨터에서 작업하는 두명의 개발자이다. 이들은 공유 클라우드 서버를 통해 협업한다. +
+그들은 파일이 아닌 전체 파일 세트에 대한 명확한 이름을 지정할수 있는 버전 번호 할당 체계가 필요하다
+
+* 또한 각 버전에 대한 로그를 유지해야한다, 이 로그는 버전 작성자, 완료된 시간 및 변경 내용을 사람이 이해하기 쉬운 형식으로 기록한다.
+
+* 버전을 푸시할 때 로그를 병합해야하며, 이를 자동화 하기 위해 도구 지원이 필요 로그를 사용하면 파일마다 변경 내용을 추적하거나 각 코드라인의 기여자를 파악이 가능하다.
+
+== Multiple branches
+
+* 프로젝트 개발 중에 새로운 기능을 실험하거나 다른 변경 사항을 시도하기 위해 메인 코드와 별개로 작업하는 ``브랜치``를 생성해야 하는 경우가 있다. 
+* 이 브랜치에서 개발자들은 새로운 기능을 완료할때까지 작업을 진행하며, 다른 개발자들은 그 변경사항을 가져오지 않으려 한다.
+
+* 동시에 여러 버전이 생성되더라도 새로운 기능이 완성될때 까지 merge 하지 않는다.
+
+== The shocking conclusion
+
+**위에서 설명한 거 이미 다 만들어져 있다 그게 Git**
+
+== Distributed vs centralized
+
+image::https://velog.velcdn.com/post-images/shson/0f16f0e0-45aa-11ea-b25f-55693821869c/image.png[300,300]
+
+image::https://velog.velcdn.com/post-images/shson/8b030810-45aa-11ea-b25f-55693821869c/image.png[250,300]
+
+* **중앙 집중형 버전 관리 시스템 (CVS,Subversion)**
+
+** 사용자의 컴퓨터가 아닌 여러 사용자의 버전관리 내용을 중앙 서버에서 관리
+
+** 협업 그래프 지원 : 그래프는 누가 어떤 변경 사항을 누구와 공유하고 있는지 나타냄, 주로 하나의 Main 서버와 해당 서버와만 통신하는 복사본 사용
+
+** CVS에서 모든 개발자는 Main저장소와 주고 받음, 변경 사항은 Main 저장소에만 안전하게 저장 (그것이 유일하기 때문)
+
+*** what is ``Subversion`` ? +
+2000년에 CVS를 대체하기 위해 만들어진 형상관리 툴
+(**GIT과 가장 큰 차이점**) 개발자가 자신만의 version history 가질수 없다. 즉 개발자와 서버의 저장소는 독립적으로 관리가 불가능
+
+* **분산 버전 관리 시스템**
+
+** 중앙에서 관리하고 있던 모든 이력을 가진 저장소 전체를 복사하여 사용자의 컴퓨터로 가져와 사용한다.
+
+** remote 저장소가 존재, 대표적으로 ``git``
+
+== Version control terminology
+* ``Repository(저장소)``: 프로젝트의 버전을 저장하는 로컬 또는 remote 저장 공간
+
+* ``working Copy(작업 복사본)``: 프로젝트의 로컬 및 편집 가능한 복사본
+
+* ``File(파일)``: 프로젝트 내의 단일 파일, 버전 관리 시스템에서는 각 파일의 변경 내용을 추적
+
+* ``Version 또는 Revision``: 특정 시점에서 프로젝트 내용을 기록, 각 버전은 프로젝트의 특정 상태
+
+* ``change 또는 diff``: 두개 버전 사이의 차이를 나타낸다. 이것은 어떤 파일이 변경 되었는지와 변경 내용의 세부 정보 포함
+
+* ``Head``: 현재 버전을 가르킴 현재 작업중인 프로젝트의 상태를 의미, 헤드는 가장 최근의 변경 사항을 포함
+
+== Features of a version control system
+
+* ``Reliable(신뢰성)``: 필요한 만큼 오랫동안 버전을 보존하고 백업을 지원
+
+* ``Multiple files(다중 파일 지원)``: 단일 파일이 아닌 프로젝트 전체의 버전을 추적
+
+* ``Meaningful versions(의미 있는 버전)``: 변경 내용과 변경 이유를 기록 (이해를 위해)
+
+* ``Revert(복구)``: 이전 버전을 전체 또는 일부로 복원가능
+
+* ``Compare versions``: 두 버전을 비교하여 변경 내용을 확인 가능
+
+* ``Review history``: 프로젝트 전체 또는 개별 파일에 대한 이력을 확인 가능
+
+* ``Not just for code``: 코드 뿐 아니라 텍스트,이미지 등 다양한 유형의 파일 지원
+
+* ``Merge``: 공통 이전 버전에서 분기된 버전을 결합
+
+* ``Track responsibility``: 어떤 개발자가 어떤 변경을 수행 했는지, 코드의 어떤 부분이 수정되었는지 추적
+
+* ``Work in parallel(병렬 작업)``: 한 프로그래머가 일정 기간 동안 혼자 작업할수 있도록 해야한다.(버전 관리 유지하며)
+
+* ``Work-in-progress``: 여러 프로그래머가 완료되지 않은 작업을 공유하고 다른 작업을 방해하지 않도록 해야한다
+
+== Git
+
+* ``Git``? 컴퓨터의 파일의 변화를 추적하고 여러 사람들 사이에서 그 파일을 조정하는 버전관리 시스템
+
+* Git의 Command Line 사용할것이다. command line은 강력하기에 널리 사용한다.
+
+== Copy an object graph with `git clone`
+
+* `git clone` 명령을 사용해 Athena(어떤 프로젝트나 과제가 저장되어 있는 서버)에서 프로젝트의 객체 그래프를 로컬 컴퓨터로 복사하는 과정
+
+. ``git clone``명령을 사용해 원격 저장소의 객체 그래프를 로컬 머신으로 복사. 이과정은 비어있는 로컬 디렉토리(``ps0``)을 만들고 그안에 `.git` 디렉토리 생성
+
+image::http://web.mit.edu/6.005/www/fa15/classes/05-version-control/figures/hello-git-clone-0.png[]
+
+. **객체 그래프** ? 실제 Git 버전 관리 시스템의 저장소, 커밋, 브랜치, 파일 등에 대한 정보 포함하는 구조체
+
+image::http://web.mit.edu/6.005/www/fa15/classes/05-version-control/figures/hello-git-clone-1.png[]
+
+. ``git checkout``명령을 사용해 현재 main 브랜치의 최신 버전을 작업 디렉토리로 가져옴 
+
+image::http://web.mit.edu/6.005/www/fa15/classes/05-version-control/figures/hello-git-clone-2.png[]
+
+즉 `git clone` 을 통해 로컬 머신으로 프로젝트의 객체 그래프를 복사하고, 이를 작업 디렉토리로 가져와서 현재 프로젝트 버전을 편집 및 수정할 수 있게 된다.
+
+----
+* b0b54b3 (HEAD, origin/master, origin/HEAD, master) Greeting in Java
+*   3e62e60 Merge
+|\  
+| * 6400936 Greeting in Scheme
+* | 82e049e Greeting in Ruby
+|/  
+* 1255f4e Change the greeting
+* 41c4b8f Initial commit
+----
+
+* 비순환 그래프(DAG) : 방향성이 있어야하며, 그래프상 cycle이 존재 하지 않는다 +
+즉 어느 한 지점에서 출발하여 다시 그 지점으로 돌아올 수 없다.
+
+* Git 프로젝트의 히스토리 그래프는 커밋의 연속으로 구성 +
+각 커밋은 파일 스냅샷을 가지고 있으며, 부모 커밋과의 관계이다 +
+브랜치는 커밋을 가리키는 이름이며, HEAD는 현재 작업중인 브랜치와 커밋을 가르킨다.
+
+== What else is in the object graph?
+
+* Git 객체 그래프는 프로젝트의 스냅샷을 효율적으로 저장하고 관리하기 위한 구조를 가지고있으며, +
+파일 공유와 로그데이터를 포함하고 있습니다. +
+Git은 변경 사항을 효과적으로 저장하면서 중복을 피하고 데이터를 공유한다
+
+* **revision** ? 특정 Git object를 가리키는 표현식 ``HEAD~2``, ``master``, ``a8dd808db6d87a1d809b1a223e08ab69602b2d3a``, ``HEAD:test.txt`` 등이 모두 “**revision**”이다.   
+
+image::http://web.mit.edu/6.005/www/fa15/classes/05-version-control/figures/hello-git-history-trees.png[]
+
+== Add to the object graph with `git commit`
+
+* 새로운 커밋을 Git 히스토리 그래프에 추가하는 과정
+
+. 작업 디렉토리 수정: 먼저 작업 디렉토리에서 프로젝트 파일을 수정
+
+. 변경 사항 스테이징: 수정한 파일 또는 새로 생성한 파일을 스테이징 영역에 추가. `git add` 명령어를 사용해 변경 사항을 스테이징
+** Staging Area : 커밋을 준비하는 단계로, 커밋될 변경 사항을 일시적으로 모아놓는 곳
+
+. 커밋 생성: 스테이징 영역에 추가한 변경 사항을 사용해 새로운 커밋 생성 (커밋 메시지도 입력 가능)
+
+== Sequences, trees, and graphs
+
+[source, git]
+----
+⋮
+*   commit 82e049e248c63289b8a935ce71b130a74dc04152
+|   Author: Ben Bitdiddle <ben.bitdiddle@example.com>
+|   Greeting in Ruby
+|     
+| * commit 64009369c5ab93492931ad07962ee81bda921ded
+|/  Author: Alyssa P. Hacker <alyssa.p.hacker@example.com>
+|   Greeting in Scheme
+|  
+* commit 1255f4e4a5836501c022deb337fda3f8800b02e4
+| Author: Max Goldman <maxg@mit.edu>
+| Change the greeting
+⋮
+// after merge
+⋮
+*   commit 3e62e60a7b4a0c262cd8eb4308ac3e5a1e94d839
+|\  Author: Max Goldman <maxg@mit.edu>
+| | Merge
+| |   
+* | commit 82e049e248c63289b8a935ce71b130a74dc04152
+| | Author: Ben Bitdiddle <ben.bitdiddle@example.com>
+| | Greeting in Ruby
+| |   
+| * commit 64009369c5ab93492931ad07962ee81bda921ded
+|/  Author: Alyssa P. Hacker <alyssa.p.hacker@example.com>
+|   Greeting in Scheme
+|  
+* commit 1255f4e4a5836501c022deb337fda3f8800b02e4
+| Author: Max Goldman <maxg@mit.edu>
+| Change the greeting
+⋮
+----
+
+* 독립적인 작업의 경우 히스토리는 일련의 연속적인 커밋으로 나타남
+* 동시에 작업을 수행하는 경우에는 branch형태로 나뉠 수 있으며, 분기가 합쳐져 history가 그래프 형태로 나탑니다.
+* Git에서 이러한 변경 사항을 관리하고 merge하는 방법은 다른 사용자 및 저장소 간에 히스토리를 공유하는 방법을 이해해야 한다.
+
+== Send& receive object graphs with ``git push``&``git pull``
+
+. 히스토리 공유: 다른 개발자 또는 원격 저장소와 변경 사항을 공유하려면  주로 ``git remote add`` +
+원격 저장소에 있는 변경 사항을 가져오려면 ``git pull`` +
+원격 저장소에서 변경 사항을 가져올 때 ``git fetch`` +
+로컬 변경 사항을 원격 저장소로 업로드하려면 ``git push`` 
+
+. 병합:서로 다른 브랜치 또는 다른 커밋 히스토리에서 변경 사항을 병합하려면 ``git merge``
+
+. 리베이스: 또 다른 방법으로는 변경 사항을 병합하는 대신 리베이스(``rebase``)를 사용. +
+리베이스는 커밋 히스토리를 변경하고 다른 브랜치의 변경 사항을 현재 브랜치에 적용하는 과정을 의미합니다.
+
+
+== Merging
+
+두 명의 개발자, Alyssa와 Ben이 동시에 같은 프로젝트를 수정하려고 합니다. 그런데 이러한 수정은 각자의 로컬 저장소에서 발생하며, 이러한 수정이 서로 충돌하지 않을 때 Git은 이를 자동으로 병합합니다.
+
+. Alyssa는 hello.scm 파일을 만들고 커밋했습니다.
+. Ben은 동시에 hello.rb 파일을 만들고 커밋했습니다.
+
+이제 Alyssa가 자신의 변경 사항을 원격 서버(Athena)에 푸시합니다. 그런데 이때 Ben이 자신의 변경 사항을 푸시하려고 하면 거부됩니다. 왜냐하면 두 개의 변경 사항이 충돌하기 때문입니다.
+
+따라서 Ben은 Alyssa의 변경 사항을 자신의 변경 사항과 병합해야 합니다. 이를 위해 Ben은 Athena에서 Alyssa의 변경 사항을 가져와서 두 변경 사항을 하나로 병합하는 새로운 커밋을 만듭니다.
+
+그 결과적으로 두 개발자의 변경 사항은 한 프로젝트로 합쳐지고, 이제 Ben은 변경 사항을 푸시할 수 있습니다. Alyssa는 이후에 Ben의 변경 사항을 가져올 수 있습니다.
+
+이러한 병합 작업을 Git은 자동으로 수행할 수 있지만, 때로는 두 개발자가 같은 파일의 같은 부분을 수정한 경우에는 수동으로 충돌을 해결해야 합니다.
+
+== Why do commits look like diffs?
+
+* **diff** ? Git 커밋 , git이 저장 및 성능 측면에서 효율적으로 설계되어서 커밋마다 전체 프로젝트의 완전한 스냅샷을 저장하는 대신 +
+현재 상태와 이전 커밋 간의 차이점만 저장 이러한 차이점을 diff , fetch 라고함
+
+* 예를들어 파일을 약간 수정하면 Git은 파일 전체를 다시 저장하는 대신 추가, 수정 또는 삭제된 라인만 저장
+
+[source, git]
+----
+$ git show 1255f4e
+commit 1255f4e4a5836501c022deb337fda3f8800b02e4
+Author: Max Goldman <maxg@mit.edu>
+Date:   Mon Sep 14 14:58:40 2015 -0400
+
+    Change the greeting
+
+diff --git a/hello.txt b/hello.txt
+index c1106ab..3462165 100644
+--- a/hello.txt
++++ b/hello.txt
+@@ -1 +1 @@
+-Hello, version control!
++Hello again, version control!
+----
+
+* 특정 커밋에선 재난 복구와 같은 상황에서 전체 프로젝트를 볼수 있다.
+
+[source, git]
+----
+$ git show 3e62e60:
+tree 3e62e60:
+
+hello.rb
+hello.scm
+hello.txt
+
+
+$ git show 3e62e60:hello.scm
+(display "Hello, version control!")
+----
+
+== Version control and the big three
+
+* 버전 관리는 코드 안전성을 강화하고 코드 이해도를 높이며 +
+프로젝트를 변경에 대응할 수 있도록 하는데 필요한 도구와 관행을 제공 +
+협업을 촉진하고 문제를 식별하고 해결하며 코드 진화의 역사를 명확하게 유지
