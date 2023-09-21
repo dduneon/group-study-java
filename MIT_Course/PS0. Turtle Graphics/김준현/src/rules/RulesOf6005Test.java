@@ -1,17 +1,17 @@
-/* Copyright (c) 2007-2016 MIT 6.005 course staff, all rights reserved.
- * Redistribution of original or derived work requires permission of course staff.
+/*
+ * Copyright (c) 2007-2016 MIT 6.005 course staff, all rights reserved. Redistribution of original
+ * or derived work requires permission of course staff.
  */
 package rules;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 /**
  * JUnit tests for RulesOf6005.
  */
 public class RulesOf6005Test {
-    
+
     /**
      * Tests the mayUseCodeInAssignment method.
      */
