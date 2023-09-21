@@ -38,7 +38,6 @@ public class TurtleSoupTest {
         assertEquals(3, TurtleSoup.calculatePolygonSidesFromAngle(60.0));
         assertEquals(7, TurtleSoup.calculatePolygonSidesFromAngle(128.57));
         assertEquals(5, TurtleSoup.calculatePolygonSidesFromAngle(108.0));
-
     }
 
     /**
@@ -49,6 +48,7 @@ public class TurtleSoupTest {
         assertEquals(0.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 0, 1), 0.001);
         assertEquals(90.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 1, 0), 0.001);
         assertEquals(359.0, TurtleSoup.calculateHeadingToPoint(1.0, 4, 5, 4, 6), 0.001);
+        assertEquals(315.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, -2, 2), 0.001);
     }
 
     /**
