@@ -52,6 +52,7 @@ public class DrawableTurtle implements Turtle {
 
     public void turn(double degrees) {
         degrees = (degrees % CIRCLE_DEGREES + CIRCLE_DEGREES) % CIRCLE_DEGREES;
+        
         this.currentHeading = (this.currentHeading + degrees) % CIRCLE_DEGREES;
         this.actionList.add(new Action(ActionType.TURN, "turn " + degrees + " degrees", null));
     }
