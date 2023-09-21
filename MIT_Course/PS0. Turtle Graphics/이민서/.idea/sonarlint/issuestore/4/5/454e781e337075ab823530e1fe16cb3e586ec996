@@ -1,0 +1,21 @@
+
+
+java:S14885"cImmediately return this expression instead of assigning it to the temporary variable "partOfAngle".(›ïˆ88Èúº¶«1
+~
+java:S1488H"\Immediately return this expression instead of assigning it to the temporary variable "side".(—¾ûĞùÿÿÿÿ8Éúº¶«1
+g
+java:S2184{"ECast one of the operands of this subtraction operation to a "double".(ß´ùèüÿÿÿÿ8Éúº¶«1
+g
+java:S2184{"ECast one of the operands of this subtraction operation to a "double".(ß´ùèüÿÿÿÿ8Éúº¶«1
+v	java:S115"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(Ñ„êâ8Üúº¶«1
+v	java:S115"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(ï‚˜8Üúº¶«1
+b
+java:S1124"EReorder the modifiers to comply with the Java Language Specification.(Ñ„êâ8Şúº¶«1
+b
+java:S1124"EReorder the modifiers to comply with the Java Language Specification.(ï‚˜8Şúº¶«1
+M	java:S106"+Replace this use of System.out by a logger.(˜Ö“ñüÿÿÿÿ8åúº¶«1
+H	java:S106"+Replace this use of System.out by a logger.(ÏÑµ8æúº¶«1
+H	java:S106Ÿ"+Replace this use of System.out by a logger.(ó‚ßÙ8æúº¶«1
+M
+java:S1197Ä"*Move the array designators [] to the type.(¡şÏÖøÿÿÿÿ8èúº¶«1
+^	java:S125Ç"<This block of commented-out lines of code should be removed.(ªâÀ²üÿÿÿÿ8éúº¶«1
