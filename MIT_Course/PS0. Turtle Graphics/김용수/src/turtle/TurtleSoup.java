@@ -173,16 +173,15 @@ public class TurtleSoup {
     public static void drawPersonalArt(Turtle turtle) {
         PenColor[] penColor = { PenColor.BLACK, PenColor.BLUE, PenColor.CYAN, PenColor.GREEN, PenColor.MAGENTA,
                 PenColor.ORANGE, PenColor.PINK };
-
         // 작품명 : 만다라
-        for (int i = 0; i < penColor.length; i++) {
+        for(int i = 0 ; i < penColor.length; i++){
             turtle.color(penColor[i]);
 
-            for (int j = 0; j < 40; j++) {
+            for(int j = 0; j < 40; j++){
                 drawSquare(turtle, 40 - (i * 5));
                 turtle.turn(10);
             }
-        }
+        }        
     }
 
     /**
