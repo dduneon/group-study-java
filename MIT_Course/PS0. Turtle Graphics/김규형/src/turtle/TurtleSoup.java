@@ -15,7 +15,14 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawSquare(Turtle turtle, int sideLength) {
-        throw new RuntimeException("implement me!");
+
+        turtle.forward(sideLength);
+        turtle.turn(90);
+        turtle.forward(sideLength);
+        turtle.turn(90);
+        turtle.forward(sideLength);
+        turtle.turn(90);
+        turtle.forward(sideLength);
     }
 
     /**
@@ -28,7 +35,10 @@ public class TurtleSoup {
      * @return angle in degrees, where 0 <= angle < 360
      */
     public static double calculateRegularPolygonAngle(int sides) {
-        throw new RuntimeException("implement me!");
+        if (sides <= 2) {
+            throw new IllegalArgumentException("sides가 작습니다.");
+        }
+        return (double) ((sides - 2) * 180) / sides;
     }
 
     /**
@@ -37,12 +47,14 @@ public class TurtleSoup {
      * There is a simple formula for this; you should derive it and use it here.
      * Make sure you *properly round* the answer before you return it (see java.lang.Math).
      * HINT: it is easier if you think about the exterior angles.
-     * 
      * @param angle size of interior angles in degrees, where 0 < angle < 180
      * @return the integer number of sides
      */
     public static int calculatePolygonSidesFromAngle(double angle) {
-        throw new RuntimeException("implement me!");
+        if (angle < 0 || angle > 180) {
+            throw new IllegalArgumentException("angle이 올바르지 않습니다.");
+        }
+        return (int) Math.round(-360 / (angle - 180));
     }
 
     /**
@@ -55,7 +67,13 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawRegularPolygon(Turtle turtle, int sides, int sideLength) {
-        throw new RuntimeException("implement me!");
+        double polygonAngle = calculateRegularPolygonAngle(sides);
+
+        for (int i = 0; i < sides; i++) {
+            turtle.forward(sideLength);
+            turtle.turn(180 - polygonAngle); // 외각 to 내각?
+        }
+
     }
 
     /**
@@ -79,13 +97,20 @@ public class TurtleSoup {
      */
     public static double calculateHeadingToPoint(double currentHeading, int currentX, int currentY,
                                                  int targetX, int targetY) {
-        throw new RuntimeException("implement me!");
+
+        double atanAngel = ((Math.atan2((targetY - currentY), (targetX - currentX))) * 180 / Math.PI);
+        double moveAngel = 90 - currentHeading - atanAngel;
+
+        if (moveAngel < 0) {
+            moveAngel += 360;
+        }
+
+        return moveAngel;
     }
 
     /**
      * Given a sequence of points, calculate the heading adjustments needed to get from each point
      * to the next.
-     * 
      * Assumes that the turtle starts at the first point given, facing up (i.e. 0 degrees).
      * For each subsequent point, assumes that the turtle is still facing in the direction it was
      * facing when it moved to the previous point.
@@ -97,7 +122,20 @@ public class TurtleSoup {
      *         otherwise of size (# of points) - 1
      */
     public static List<Double> calculateHeadings(List<Integer> xCoords, List<Integer> yCoords) {
-        throw new RuntimeException("implement me!");
+        List<Double> angelList = new ArrayList<>();
+
+        int currentX = xCoords.get(0);
+        int currentY = yCoords.get(0);
+        double currentAngle = 0;
+
+        for (int i = 1; i < xCoords.size(); i++) {
+            angelList.add(calculateHeadingToPoint(currentAngle, currentX, currentY, xCoords.get(i), yCoords.get(i)));
+            currentX = xCoords.get(i);
+            currentY = yCoords.get(i);
+            currentAngle = angelList.get(i-1);
+        }
+
+        return angelList;
     }
 
     /**
@@ -109,8 +147,31 @@ public class TurtleSoup {
      * @param turtle the turtle context
      */
     public static void drawPersonalArt(Turtle turtle) {
-        throw new RuntimeException("implement me!");
+
+        turtle.color(PenColor.CYAN);
+        turtle.turn(90);
+        binaryTree(turtle,50);
+        turtle.draw();
     }
+
+    public static void binaryTree(Turtle turtle, int n) {
+        binaryTree(turtle, n-1);
+        binaryTree(turtle, n+1);
+        if (n == 0 || n == 100)  return;
+
+        if (n < 50) {
+            turtle.forward(1);
+            turtle.turn(0);
+            turtle.forward(1);
+        } else if (n > 50) {
+            turtle.forward(1);
+            turtle.turn(0);
+            turtle.forward(-1);
+        }
+
+        return;
+    }
+
 
     /**
      * Main method.
@@ -121,11 +182,7 @@ public class TurtleSoup {
      */
     public static void main(String args[]) {
         DrawableTurtle turtle = new DrawableTurtle();
-
-        drawSquare(turtle, 40);
-
-        // draw the window
-        turtle.draw();
+        drawPersonalArt(turtle);
     }
 
 }

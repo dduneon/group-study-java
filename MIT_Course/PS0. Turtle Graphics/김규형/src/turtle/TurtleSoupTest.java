@@ -49,6 +49,11 @@ public class TurtleSoupTest {
         assertEquals(0.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 0, 1), 0.001);
         assertEquals(90.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 1, 0), 0.001);
         assertEquals(359.0, TurtleSoup.calculateHeadingToPoint(1.0, 4, 5, 4, 6), 0.001);
+        assertEquals(45.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 2, 2), 0.001);
+        assertEquals(135.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, 2, -2), 0.001);
+        assertEquals(225.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, -2, -2), 0.001);
+        assertEquals(315.0, TurtleSoup.calculateHeadingToPoint(0.0, 0, 0, -2, 2), 0.001);
+        assertEquals(224.0, TurtleSoup.calculateHeadingToPoint(91.0, 0, 0, -2, 2), 0.001);
     }
 
     /**
@@ -64,6 +69,7 @@ public class TurtleSoupTest {
         ypoints.add(0);
         ypoints.add(1);
         ypoints.add(2);
+
 
         List<Double> result = TurtleSoup.calculateHeadings(xpoints, ypoints);
         assertEquals(2, result.size());
