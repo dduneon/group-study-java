@@ -150,9 +150,9 @@ public class TurtleSoup {
         for (int i = 0; i < xCoords.size()-1; i++) {
             result.add(calculateHeadingToPoint(headingPoint,xCoords.get(i),yCoords.get(i),xCoords.get(i+1),yCoords.get(i+1)));
             headingPoint+=result.get(i);
-            if(headingPoint>=360){
-                headingPoint-=360;
-            }
+//            if(headingPoint>=360){
+//                headingPoint-=360;
+//            }
         }
         System.out.println(result.size());
         System.out.println(result.get(0));
