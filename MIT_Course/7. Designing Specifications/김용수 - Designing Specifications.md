@@ -120,21 +120,24 @@ ex) 배열에 처음부터 검색할지 아니면 뒤에서부터 검색할지 �
 static boolean startsWith(String str, String prefix)
  effects: returns true if and only if there exists String suffix
             such that prefix + suffix == str
+
 ------------------------------------------------------------------------------
 static boolean startsWith(String str, String prefix)
  effects: returns true if and only if there exists integer i
             such that str.substring(0, i) == prefix
+
 ------------------------------------------------------------------------------
 static boolean startsWith(String str, String prefix)
  effects: returns true if the first prefix.length() characters of str
             are the characters of prefix, false otherwise
+
 ```
 
 **코드의 클라이언트와 관리자를 위해서 가장 좋은 스펙을 선택하는 것은 본인 나름이다.**
 
 ---
 
-## Stronger vs. weaker specs
+## Stronger vs. Weaker specs
 
 - 메서드의 구현 방식이나 스펙 자체를 변경하고 싶다고 가정해보자.
 - 메소드의 현재 스펙에 의존하는 클라이언가 이미 존재한다.
@@ -144,7 +147,7 @@ static boolean startsWith(String str, String prefix)
 **스펙 S2가 스펙 S1보다 강하거나 같을 때**
 
 - **S2의 precondition은 S1의 precondition보다 약하거나 같다.**
-- **S1의 precondition의 상태를 만족하는것에 대해서 S2의 postcondition은 S1보다 강하다.**
+- **S1,S2의 precondition의 상태를 만족하는것에 대해서 S2의 postcondition은 S1보다 강하다.**
 
 → 이런 경우 S2를 만족하는 구현을 S1을 만족시킬 수 있으며, 프로그램에서 S1을 S2로 대체해도 상관이 없다.
 
@@ -194,16 +197,15 @@ static int findCanBeMissing(int[] a, int val)
 
 **이 공간의 각 지점은 메서드의 구현공간을 나타낸다.**
 
-
-![Untitled](./image/kys1651/Untitled.png)
+![Untitled](Designing%20Specifications%20f1ea1016a3f5431c87a2f5216d2f570d/Untitled.png)
 
 - **위에서 정의한 `find(First)`, `find(Last)`를 정의한다. spec이 아니라 실제 동작을 구현하는 메서드 본문인 implementation이다. 그래서 우리는 점으로 표시한다.**
 
-![Untitled](./image/kys1651/Untitled%201.png)
+![Untitled](Designing%20Specifications%20f1ea1016a3f5431c87a2f5216d2f570d/Untitled%201.png)
 
 - **Specification은 가능한 모든 구현들의 공간의 영역을 정의한다.**
 - **지정된 구현들은 스펙에 따라 동작하며 precondition - postcondition 조건을 충족하거나(지역 내부) 그렇지 않다.(지역 외부)**
-- `**find(First)` , `find(Last)`,`find(OneOrMore,AnyInder)` 은 모두 스펙에 의해 정이되므로 지역 내부에 있다.**
+- `**find(First)` , `find(Last)`,`find(OneOrMore,AnyInder)` 은 모두 스펙에 의해 정의되므로 지역 내부에 있다.**
 
 **우리는 클라이언트들이 이 공간을 들여다본다고 생각할 수 있다. 스펙은 방화벽 역할을 한다.**
 
@@ -223,7 +225,7 @@ static int findCanBeMissing(int[] a, int val)
 
 **→ postcondition이 더 강해진다는것은 구현자에게 자유를 줄이고 출력값에 대한 요구사항이 더 많아진다는 것이다.  이전에 `find(OneOrMore,AnyImdex)` 는 단순히 index `i` 만을 리턴해서 만족했지만 스펙의 요구로 가장 낮은 인덱스 `i`를 리턴해야한다.**
 
-**그러므로 이제는 `find(OneOrMore, AnyIndex)` 에는 있지만 `find(OneOrMore, FirstIndex)`밖에 구현이 있다.**
+**그러므로  지금은 `find(OneOrMore, AnyIndex)` 에는 있지만 `find(OneOrMore, FirstIndex)`밖에 구현이 있어야한다.**
 
  **`find(OneOrMore,FirstIndex)`안에는 있고 `find(OneOrMore, AnyIndex)` 밖에는 구현이 있을 수 있을까?** 
 
@@ -231,9 +233,9 @@ static int findCanBeMissing(int[] a, int val)
 
 - **precondition을 약화시키면 어떻게 될까? S2의 스펙이 더 강해진다 :**  구현에서는 이전에 스펙에서 제외되었던 새로운 입력을 처리해야한다.
 
-**→ 이전에는 잘못된 입력 값이 들어왔다면 눈치 채지 못했지만 이제는 잘못된 행동이러는 걸 알 수 있음**
+**→ 이전에는 잘못된 입력 값이 들어왔다면 눈치 채지 못했지만 이제는 잘못된 행동이라는 걸 알 수 있음**
 
-![Untitled](./image/kys1651/Untitled%202.png)
+![Untitled](Designing%20Specifications%20f1ea1016a3f5431c87a2f5216d2f570d/Untitled%202.png)
 
 - **************************************우리는 S1보다 S2가 강할 때 다이어그램에서 더 작은 영역을 정의한다는 걸 알 수 있다.(더 약한 스펙은 더 큰 영역을 가진다.)**************************************
 - **그림에서 `find(Last)`는 배열 arr 끝에서 반복하므로 `find(OneOrMore,FIrstIndex)`를 만족하지 않고 영역 밖에 있다.**
@@ -286,7 +288,7 @@ public static void countLongWords(List<String> words)
 
 ### ****The results of a call should be informative****
 
-**map에 값을 넣는 방법에 spec**
+**map에 값을 넣는 방법 - spec**
 
 ```java
 static V put (Map<K,V> map, K key, V val)
@@ -370,7 +372,7 @@ static ArrayList<T> reverse(ArrayList<T> list)
 
 **일반적으로, 잘못된 값이 입력된 지점에서 가능한 빨리 실패하는 것(fail fast)이 좋다.**
 
-**때로는 메서드를 허용할 수 없을 정도로 느리게 만들지 않고 조건을  확인하는 것이 불가능하며, 이러한 경우에는 precondition이 필요한 경우가 많다.** 
+- **때로는 메서드를 허용할 수 없을 정도로 느리게 만들지 않고 조건을  확인하는 것이 불가능하며, 이러한 경우에는 precondition이 필요한 경우가 많다.**
 
 **만약, 우리가 `find` 메소드를 이진 검색으로 사용하기 위해서는 일단 배열을 정렬해야한다.**
 
@@ -385,3 +387,56 @@ static ArrayList<T> reverse(ArrayList<T> list)
 ---
 
 ## About access control
+
+**우리는 지금까지 거의 모든 메서드에 `public` 접근 지정자를 사용했다.**
+
+- 메소드를 `Public` or `private`로 만드는 것은 클래스 계약에 대한 결정이다.
+- `public` : 공개적으로 프로그램에 다른 부분에서 자유롭게 접근 가능
+
+**→ 메서드를 Pulbic로 설정하면 해당 메서드가 클래스에서 제공하는 서비스임**
+
+- **만약 클래스내에 로컬에서만 사용하기 위해서 모든 메서드를 Public로 사용하는 경우에는 프로그램끼리 의존하게 되어(결합도가 높아져) 변경하기 힘들 수 있다.** → Not reday for change(RFC)
+- 또 클래스가 제공하는 메서드를 public로 사용하면 인터페이스가 복잡해진다. 그러므로 내부 항목을 Private로 유지하면 인터페이스가 더 작고 일관되게 유지된다. 즉, 한가지 작업을 잘 수행한다.(응집도가 높아짐)
+
+→ easier to understande(ETU)
+
+- **지속적인 상태를 갖는 클래스를 작성하기 시작할 때 private로 작성한다면 상태가 유지된다. 상태가 유지되면 더 안전해진다.** → safe from bugs(SFB)
+
+---
+
+## About static vs. instance methods
+
+**지금까지는 거의 모든 메서드를 static 메서드로 사용해왔다. `static` 메서드는 클래스에 특정 인스턴스와 연결되지 않지만, 인스턴스 메서드(static을 사용하지 않고 선언)는 특정 개체에 의해 호출되어야 한다.**
+
+- **인스턴스 메서드에 대한 사양은 스태틱 메서드와 동일한 방식으로 스펙이 작성되지만, 종종 호출된 인스턴스의 속성(변수)를 참조한다.**
+
+ex)
+
+```java
+static int find(int[] arr, int val)
+  requires: val occurs in arr
+  effects:  returns index i such that arr[i] = val
+```
+
+→ `int[]` 대신 정수배열은 저장하도록 설계된 `IntArray` 클래스가 있다면?
+
+```java
+int find(int val)
+  requires: val occurs in *this array*
+  effects:  returns index i such that *the value at index i in this array*
+              is val
+```
+
+---
+
+## Summary
+
+**스펙은 구현자와 클라이언트 사이(또는 코드와  사람)사이에서 중요한 방화벽 역할을 한다.**
+
+- **클라이언트는 코드가 어떻게 짜여졌는지 보지 않고 모듈을 사용할 수 있고 구현자는 모듈이 어떻게 사용될지 모르더라도 자유롭게 코드를 작성 할 수 있다.**
+- **`Declarative spec`은 가장 유용하다.**
+- **precondition(spec을 약하게 만듬)은 클라이언트가 더 힘들어지지만, 잘 적용하면 소프트웨어 디자이너에게 중요한 도구이며, 구현자에게는 더 필요한 가정을 할 수 있다.**
+
+- **SFB :** 프로그램에 어떤 부분에 대해서 스펙이 없다면, 아주 작은 변화로도 프로그램이 망가질 수 있다. 좋은 스펙은 static checking, 신중한 추론, test 및 code review를 통해서 오해를 최소화하고 올바른 코드 작성 능력을 만든다.
+- **ETU :** 좋은 스펙은 고객이 코드를 읽거나 이해 할 필요 없다. (파이썬 라이브러리 사용할 때 코드 안읽어보고 사용하는 것처럼)
+- **SFB :** 적절하게 약한 스펙은 구현자에게 자유를 주고, 적절하게 강한 사양은 클라이언트에게 자유를 준다. 우리는 precondition의 약화와 postcondition를 강화시키는 방법을 이용하면 스펙을 강화시킬 수 있다.
