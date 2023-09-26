@@ -1,0 +1,255 @@
+= Reading 8: Avoiding Debugging
+Reference by <http://web.mit.edu/6.005/www/fa15/classes/08-avoiding-debugging/>
+v1.0, 2023-09-25
+
+== 목표
+* 디버깅을 완전히 피하거나 디버깅을 해야 할 때 쉽게 처리하는 방법
+
+== First Defense: Make Bugs Impossible
+
+* ``static checking``은 컴파일 시간에 많은 버그를 잡아냅니다.
+
+* ``dynamic checking``몇가지 예시, Java는 배열 오버플로 버그를 동적으로 잡아냅니다. 배열 또는 list의 범위를 벗어난 인덱스를 사용하려고 하면 Java가 자동으로 오류를 생성합니다.
+
+* Immutability(변경 불가능)은 다른 버그를 방지하는 것이 설계 원칙
+
+** example) String은 불변 타입이며, String에 대한 변경을 유발할 수 있는 메서드는 없다. 변경될 염려없이 전달하고 공유할 수 있습니다.
+
+* Java는 또한 ``Immytable reference``(한번 할당되면 다시 할당 할수 없는)를 제공합니다. 메서드의 매개변수 및 가능한 많은 local variable을 선언할때 final 키워드를 사용하는 것이 좋은 습관입니다.
+
+[source, java]
+----
+final char[] vowels = new char[] {'a','e','i','o','u'};
+----
+
+* vowels변수는 final로 선언되었지만 실제로 변경이 될까요?
+* 다음 문장중 어떤 것이 컴파일러에 의해 금지(정적으로 검사)되고 어떤것이 허용될까요?
+
+[source, java]
+----
+vowels = new char[] { 'x', 'y', 'z' }; // 금지됨
+vowels[0] = 'z'; // 허용됨
+----
+
+* final이 무엇을 의미하는지 주의! 이것은 참조는 불변으로 만들지만, 참조가 가리키는 객체는 불변이 아닐 수 있습니다.
+
+* 즉 버그를 방지하기 위한 가장 좋은 방법중 하나는 static check와 immutability를 통한 설계입니다. static checking은 컴파일 시간에 오류를 잡아내며 immutability는 변경되지 않는 값과 참조를 적절히 사용하여 버그를 방지합니다.
+
+== Second Defense: Localize Bugs
+
+* 버그를 방지하는 것이 아니라 버그의 영향을 최소화 하여 버그의 원인을 찾기 쉽게 해야 한다.(fail fast)
+
+간단한 예시를 들어보자
+
+[source, java]
+----
+/**
+ * @param x  requires x >= 0
+ * @return x의 제곱근에 대한 근사값
+ */
+public double sqrt(double x) { ... }
+----
+
+* 누군가 음수 인수를 사용해 sqrt를 호출한다 가정시 임의 값을 반환하거나 무한 루프에 진입하거나 cpu를 멈추게 할수 있다.
+* 가장 유용한 방법은 fail fast입니다. 이를 위해 precondition을 테스트하는 assertion을 사용합니다.
+
+다음은 assertion의 한가지 방법
+
+[source, java]
+----
+/**
+ * @param x  requires x >= 0
+ * @return approximation to square root of x
+ */
+public double sqrt(double x) { 
+    if (! (x >= 0)) throw new AssertionError();
+    ...
+}
+----
+
+* precondition이 만족하지 않을때 예외를 던져 프로그램을 종료시킵니다.
+* precondition을 checking하는 것은 defensive programming의 한 예입니다.
+
+== Assertions
+
+* assertion은 보통 ``procedure``를 사용하여 정의
+** **procedure**? 프로그램에서는 한번에 수행되어야 하는 코드 블럭을 의미, 함수나 메서드와 유사한 개념
+
+[source, java]
+----
+assert (x >= 0);
+----
+* assertion은 실패시 종료될수 있고, 로그에 이벤트를 기록할 수도 있고, 유지보수자에게 이메일을 보낼수도 있다.
+
+* assertion은 프로그램의 상태를 가정하고 문서화에 도움이 되며, 위의 예시로 x>=0이어야 한다는 것과 같다. 하지만 주석과 달리 assertion은 실행이 가능하기에 런타임에 가정이 강제되어진다.
+
+가장 간단한 형태의 assertion
+
+[source, java]
+----
+assert x>=0;
+----
+
+* 가정이 false인 경우 예외를 던지며, 에러 메시지를 포함할 수 있으며, stacktrace와 함께 정보를 포함 가능하다
+
+* 하지만 java assertion은 프로그램 성능에 영향을 가끔 끼칠수 있으므로 기본적으로 비활성화 되어있다.
+** 따라서 JVM 실행시 명시적으로 -ea(assertion 활성화)를 전달하여야 한다.
+
+* Junit이 좋다
+
+[source, java]
+----
+@Test(expected=AssertionError.class)
+public void testAssertionsEnabled() {
+    assert false;
+}
+----
+
+* java의 assertion은 jnuit의 assertTrue(),assertEquals() 등과는 다른 메커니즘이다. assert문은 구현 내에서 방어적인 검사를 위해 사용되어야한다. Junit의 assert...() 메서드는 Junit테스트에서 결과를 확인하기 위해 사용되며 항상 실행됩니다.
+
+== 어떤 상황에서 assertion을 사용해야 하는가
+
+. **``Method argument requirements``**? 예를 들어 sqrt메서드에서 볼 수 있듯이 메서드에 전달되는 인자가 특정 조건을 충족해야 할 때 사용가능
+
+. **``Method return value requirements``**? 어떤 메서드의 반환값에 대한 요구사항을 검사하는 것도 중요하다. 예를들어 sqrt 메서드는 결과가 x와 충분히 가까운지를 확인하기 위해 사용가능
+
+[source, java]
+----
+public double sqrt(double x) {
+    assert x >= 0;
+    double r;
+    ... // compute result r
+    assert Math.abs(r*r - x) < .0001;
+    return r;
+}
+----
+
+. **``Covering all cases``**? 조건문이나 스위치문이 가능한 모든 경우를 처리하지 않는 경우. 예를들어 모음 문자 'a','e','i','o','u'를 처리하는 switch문에서 default 절에 assertion을 사용함으로 모음 문자가 반드시 이 다섯문자중 하나이어야 함을 확실히 할수 있다.
+
+[source, java]
+----
+switch (vowel) {
+  case 'a':
+  case 'e':
+  case 'i':
+  case 'o':
+  case 'u': return "A";
+  default: Assert.fail();
+}
+----
+
+* 언제 어설션을 작성하는가?
+** 코드를 작성하는 동안 작성해야 한다. 코드를 작성하는 동안에 이런 invariants(불변성)을 생각하고있기 때문! (나중에 할려고하면 까먹을 가능성 높음)
+
+* 즉 assertion은 메서드 인자, 반환값의 조건 그리고 모든 가능한 경우를 처리할 때 사용하며, 코드를 작성하는 동안 작성하는 것이 효과적
+
+== Assertion을 어떤 경우에 사용하지 말아야 하는가?
+
+* assertion은 코드를 가독성 좋게 유지하고 버그를 찾는 데 도움을 주지만, 남용하면 코드를 혼란스럽게 하며 성능에도 좋지 않다.
+
+무엇을 assertion하지 말아야 할까?
+
+. 불필요한 assertion: assertion이 코드의 local context에서 자명한 경우, 즉시 알 수 있는 경우에는 작성하지 않습니다.
+.. // don't do this: +
+x = y + 1; +
+assert x == y+1;
+
+. 외부 조건을 assertion으로 테스트하지 말것
+.. 예를 들어 파일의 존재 여부, 네트워크 가용성 또는 사용자가 입력한 내용의 정확성과 같은 외부 조건은 테스트해서는 안됩니다.
+.. assertion은 프로그램 내부 상태를 테스트하여 specification 범위 내에 있는지 확인합니다.
+.. assertion 실패는 프로그램이 의도하지 않은 버그를 나타내며 외부 실패는 버그가 아니며 예방할수 없기에 exception처리 해야함
+
+. assertion은 주로 테스트 및 디버깅 중에만 실행되어야 한다.
+.. 프로그램을 release할땐 assertion을 비활성화 하는것이 일반적이다.
+.. assertion으로 인해 성능저하가 발생할 수 있기 때문, 그러나 이런 성능 저하는 대부분의 애플리케이션에서는 무시할 만큼 작다. 따라서 대부분의 경우, 코드를 개발하고 디버깅할때 assertion을 켜두고 release할때 비활성화 하는것이 좋다.
+
+. assertion expressions은 프로그램이 올바르게 동작하는데 필요해선 안된다.
+.. 특히 side-effect가 없어야한다 예를들어 리스트에서 제거된 요소가 실제로 리스트에서 찾았는지 assertion으로 확인하려면 assertion expression안에서 제거 작업을 수행하면 안된다.
+
+[source, java]
+----
+// don't do this:
+assert list.remove(x);
+
+다음과 같이 하라
+
+boolean found = list.remove(x);
+assert found;
+----
+
+== 점진적 개발(Incremental Development)
+
+* 프로그램을 작은 부분으로 나누어서 테스트를 하는 것
+** 버그를 빠르게 발견하고 수정하는데(fail fast) 도움된다.
+
+. Unit Testing: 모듈을 독립적으로 테스트할 때, 발견한 버그가 해당 모듈에 있는지 확인할 수 있습니다. 또한 test case에 버그가 있는지도 확인 가능합니다.
+
+. Regression Testing: 큰 시스템에 새로운 기능을 추가할 때, 회귀 테스트 suit를 최대한 자주 실행하라. 테스트가 실패하면 해당 버그는 방금 수정한 코드에 있을 확률이 높다.
+
+== Modularity & Encapsulation(모듈화 & 캡슐화)
+
+* 버그를 지역화 하는 방법 with software design
+** 버그를 "지역화"한다는 것은 버그가 발생한 부분을 특정 지역 또는 한정된 범위로 한정시키는 것을 의미
+
+. Modularity(모듈성): 시스템을 구성 요소 또는 모듈로 나누는 것을 의미. 각 모듈은 나머지 시스템과 독립적으로 디자인 , 구현 , 테스트, 논리적 추론 및 재사용이 가능
+
+. Encapsulation(캡슐화): 모듈 주변에 벽을 두어 모듈간에 서로 다른데서 생긴 버그가 그 무결성을 손상시키지 못하게 한다. public 변수 또는 메서드는 모든 코드에서 접근 가능하며 private 변수 또는 메서드는 동일한 클래스의 코드에서만 접근가능, 특히 변수의 경우 가능한 한 private으로 유지함으로 버그가 생길 범위를 제한하여 캡슐화합니다.
+
+* 변수의 scope는 변수가 프로그램 텍스트 내에서 어디서 정의되었는지 나타냄
+
+* 변수의 범위를 가능한 작게 유지하면 버그 찾는것이 쉬워진다. +
+예를들어 어떤 반복문이 계속해서 실행되고 i가 100에 도달하지 않는 버그를 발견했다고 가정시 어디서 i가 변경되었는지 알아야한다
+
+[source, java]
+----
+전역 변수로 선언된 경우
+
+public static int i;
+...
+for (i =0; i < 100; ++i) {
+    ...
+    doSomeThings();
+    ...
+}
+//그 범위는 전체 프로그램이다
+
+지역 변수로 선언된 경우
+
+for (int i = 0; i < 100; ++i) {
+    ...
+    doSomeThings();
+    ...
+}
+//i를 변경할 수 있는 곳은 for문 내부뿐입ㅂ니다. 따라서 다른 메서드에서는 이 지역 변수에 접근 불가
+
+변수의 범위를 최소화 하는 것은 버그의 지역화하는 강력한 방법
+
+1. 반복문에서 루프 변수는 항상 루프 초기화 부분에서 선언하라
+
+int i;
+for (i = 0; i < 100; ++i) {}
+위 코드 대신
+for (int i = 0; i < 100; ++i) {}
+
+----
+
+. **변수는 처음 필요할 때에만 선언하라**: 변수를 사용하기 전에 그 변수가 필요한 시점에서 선언하자. 또한 변수의 범위는 중괄호 블록 내부에서만 적용되기 때문에, 변수를 사용하는 표현식을 포함하는 가장 가까운 중괄호 블록 내에서 변수를 선언하자
+
+. **전역 변수를 피하세요**: 전역 변수는 프로그램 어디서나 접근할 수 있는 변수로, 프로그램이 커질수록 복잡성이 증가한다. 따라서 가능한 전역변수를 사용하지 말고, 대신에 각 함수나 메서드에 필요한 데이터를 매개변수로 전달하여 사용하자.
+
+== 정리
+
+. 디버깅 피하기
+.. 디버깅을 피하려면 정적 유형 검사, 자동 동적 검사, 불변 유형 및 참조와 같은 기술을 사용하여 버그를 불가능하게 만들어야 합니다.
+
+. 버그를 격리하기
+.. 어설션을 사용하여 빠르게 실패하면 버그의 영향을 확산시키지 않을 수 있습니다. 또한, 점진적 개발과 유닛 테스트를 통해 버그를 최근 코드로 제한할 수 있습니다.
+
+. 변수 범위 최소화
+.. 변수 범위를 최소화하면 프로그램에서 버그를 찾아야 하는 코드 양을 줄일 수 있습니다.
+
+**코드 품질 측정하는 세가지 지표 고려시**
+
+. 버그로부터 안전함: 버그를 방지하고 제거하기 위해 노력합니다.
+. 이해하기 쉬움: 정적 유형 검사, 최종 선언 및 어설션과 같은 기술은 코드의 가정에 대한 추가 문서화입니다. 변수 범위 최소화는 변수의 사용 방법을 이해하는 독자에게 도움이 됩니다.
+. 변화에 준비됨: 어설션과 정적 유형 검사는 가정을 자동으로 검사 가능한 방식으로 문서화하므로 미래의 프로그래머가 코드를 변경할 때 이러한 가정의 우발적인 위반을 감지할 수 있습니다.
