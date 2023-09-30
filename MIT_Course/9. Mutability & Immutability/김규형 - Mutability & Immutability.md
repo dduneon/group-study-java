@@ -1,4 +1,4 @@
-# ****Mutability & Immutability(23.09.26)****
+# Mutability & Immutability(23.09.26)
 
 ### Object
 
@@ -21,6 +21,9 @@
     - s 라는 String 객체는 언제나 “a” 만을 담고 있다.
     - 하지만 `concat` 을 통해 이어 붙일 시에 새로운 ab라는 객체를 만들어 저장한다.
     - s가 가르키는 주소가 변경되는 형태
+        
+        ![reassignment.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/reassignment.png)
+        
 - `StringBuilder` 는 가변 타입의 예시이다. 문자열을 일부 삭제, 삽입등을 방법을 가지고 있다.
     
     ```java
@@ -30,6 +33,9 @@
     
     - 하지만 `StringBuiler` 는 다르다.
     - 하나의 sb 객체에 값을 직접 수정하는 식으로 변경한다.
+        
+        ![mutation.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/mutation.png)
+        
 
 ```java
 String t = s;
@@ -41,6 +47,9 @@ tb.append("c");
 
 - 일반적인 `String` 에서 `t` 와 `s` 는 같은 객체를 가르킨다. 물론 `tb` 와 `sb` 또한 같은 객체를 가르킨다.
 - 하지만 값의 변경이 이루어질 때 `t` 는 새로운 객체인 **abc** 를 생성해서 가르키지만, `tb` 는 `sb` 와 함께 가르키는 객체를 수정해 `sb` 또한 같이 값이 변경된다.
+    
+    ![string-vs-stringbuilder.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/string-vs-stringbuilder.png)
+    
 - `String` 의 사용이 일부 코드에서 지양되는 이유
     
     ```java
@@ -53,15 +62,16 @@ tb.append("c");
     for (int i = 0; i < n; ++i) {
     	  StringBuilder sb = new StringBuilder();
         for (int j = 0; j < s.length; j++) { // 기존 문자열 n -1 번 반복
-    				sb += s.charAt(j); // 기존의 s의 문자열을 하나하나 새로운 값에 넣어야함 
+    				sb.append(s.charAt(j);// 기존의 s의 문자열을 하나하나 새로운 값에 넣어야함 
     		}
-    		sb += n;
+    		sb.append(n);
     		s = sb;
     }
     ```
     
     - `String` 에 대한 많은 변경이 이루어질 때 너무나 많은 임시적 복사본이 생성된다.
     - 위 코드에서는 `n` 개의 `String` 객체가 생성될 위험을 가진다.
+    - 시간 복잡도 면에서도  O($n^2$)를 가진다
 - `StringBuilder` 객체는 이러한 문제를 해결 할 수 있다.
     
     ```java
@@ -111,6 +121,19 @@ public static int sumAbsolute(List<Integer> list) {
 - 이 코드는 list를 직접 변경하여 사용한다.
 - 얼핏 보면 효율적인 코드로 보인다. (DRY 우수)
 - 하지만 이 코드는 잠재적인 버그를 가지고 있다. → 가변객체를 통과시키는것 , 추후에 디버깅 난이도 상승
+
+```java
+/** @return the sum of the absolute values of the numbers in the new list */
+public static int sumAbsolute(List<Integer> list) {
+    List<Integer> absoluteValues = new ArrayList<>();
+    for (int num : list) {
+        absoluteValues.add(Math.abs(num));
+    }
+    return sum(absoluteValues);
+}
+```
+
+- 가변 객체를 넘기는것보단 새로운 리스트를 생성해서 넘기는 것이 조금더 안전하다.
 
 ### ****Risky example #2: returning mutable values****
 
@@ -376,7 +399,7 @@ for (String subject : subjects) {
     - 만약 같은 Iterator를 다른 프로그램이 실행중이라면..?’
 - 이 문제에 대한 스냅샷 다이어그램
     
-    ![스크린샷 2023-09-26 오후 4.04.33.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/1492c136-60a9-4775-bb85-d42621a8a8ec/6cf63732-73dc-4941-a216-90033c3bc1f7/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-09-26_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_4.04.33.png)
+    ![스크린샷 2023-09-26 오후 4.04.33.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/%25E1%2584%2589%25E1%2585%25B3%25E1%2584%258F%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25B5%25E1%2586%25AB%25E1%2584%2589%25E1%2585%25A3%25E1%2586%25BA_2023-09-26_%25E1%2584%258B%25E1%2585%25A9%25E1%2584%2592%25E1%2585%25AE_4.04.33.png)
     
 
 ## ****Mutation and contracts****
