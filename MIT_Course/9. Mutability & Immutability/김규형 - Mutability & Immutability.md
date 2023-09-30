@@ -22,7 +22,7 @@
     - 하지만 `concat` 을 통해 이어 붙일 시에 새로운 ab라는 객체를 만들어 저장한다.
     - s가 가르키는 주소가 변경되는 형태
         
-        ![reassignment.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/reassignment.png)
+        ![reassignment.png](img/kkh/reassignment.png)
         
 - `StringBuilder` 는 가변 타입의 예시이다. 문자열을 일부 삭제, 삽입등을 방법을 가지고 있다.
     
@@ -34,7 +34,7 @@
     - 하지만 `StringBuiler` 는 다르다.
     - 하나의 sb 객체에 값을 직접 수정하는 식으로 변경한다.
         
-        ![mutation.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/mutation.png)
+        ![mutation.png](img/kkh//mutation.png)
         
 
 ```java
@@ -48,7 +48,7 @@ tb.append("c");
 - 일반적인 `String` 에서 `t` 와 `s` 는 같은 객체를 가르킨다. 물론 `tb` 와 `sb` 또한 같은 객체를 가르킨다.
 - 하지만 값의 변경이 이루어질 때 `t` 는 새로운 객체인 **abc** 를 생성해서 가르키지만, `tb` 는 `sb` 와 함께 가르키는 객체를 수정해 `sb` 또한 같이 값이 변경된다.
     
-    ![string-vs-stringbuilder.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/string-vs-stringbuilder.png)
+    ![string-vs-stringbuilder.png](img/kkh/string-vs-stringbuilder.png)
     
 - `String` 의 사용이 일부 코드에서 지양되는 이유
     
@@ -399,7 +399,7 @@ for (String subject : subjects) {
     - 만약 같은 Iterator를 다른 프로그램이 실행중이라면..?’
 - 이 문제에 대한 스냅샷 다이어그램
     
-    ![스크린샷 2023-09-26 오후 4.04.33.png](Mutability%20&%20Immutability(23%2009%2026)%20c5fadaf47f184ca296f0b21915027579/%25E1%2584%2589%25E1%2585%25B3%25E1%2584%258F%25E1%2585%25B3%25E1%2584%2585%25E1%2585%25B5%25E1%2586%25AB%25E1%2584%2589%25E1%2585%25A3%25E1%2586%25BA_2023-09-26_%25E1%2584%258B%25E1%2585%25A9%25E1%2584%2592%25E1%2585%25AE_4.04.33.png)
+    ![스크린샷 2023-09-26 오후 4.04.33.png](img/kkh/img1.png)
     
 
 ## ****Mutation and contracts****
