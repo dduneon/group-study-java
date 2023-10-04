@@ -9,8 +9,8 @@
 ## ****Mutability****
 
 - Java의 일부 객체는 불변성을 가지고 있다.
-- 한번 생성되면 → 같은 값을 가지고 있다. *[Immutability]*
-- 객체의 값을 변경하는 메소드가 있다. → *[Mutability]*
+- 한번 생성되면 → 항상 동일한 값을 가지고 있다. *[Immutability]*
+- 한번 생성되면 → 추후 값을 변경하는 메소드가 있다. *[Mutability]*
 - `String` 은 불변 타입의 가장 큰 예시이다. 같은 객체는 항상 동일한 문자열만을 나타낸다.
     
     ```java
@@ -22,7 +22,7 @@
     - 하지만 `concat` 을 통해 이어 붙일 시에 새로운 ab라는 객체를 만들어 저장한다.
     - s가 가르키는 주소가 변경되는 형태
         
-        ![reassignment.png](img/kkh/reassignment.png)
+        ![reassignment.png](image/kkh/reassignment.png)
         
 - `StringBuilder` 는 가변 타입의 예시이다. 문자열을 일부 삭제, 삽입등을 방법을 가지고 있다.
     
@@ -34,7 +34,7 @@
     - 하지만 `StringBuiler` 는 다르다.
     - 하나의 sb 객체에 값을 직접 수정하는 식으로 변경한다.
         
-        ![mutation.png](img/kkh//mutation.png)
+        ![mutation.png](image/kkh/mutation.png)
         
 
 ```java
@@ -48,7 +48,7 @@ tb.append("c");
 - 일반적인 `String` 에서 `t` 와 `s` 는 같은 객체를 가르킨다. 물론 `tb` 와 `sb` 또한 같은 객체를 가르킨다.
 - 하지만 값의 변경이 이루어질 때 `t` 는 새로운 객체인 **abc** 를 생성해서 가르키지만, `tb` 는 `sb` 와 함께 가르키는 객체를 수정해 `sb` 또한 같이 값이 변경된다.
     
-![string-vs-stringbuilder.png](./img/kkh/stringvsstringbuilder.png)
+    ![string-vs-stringbuilder.png](image/kkh/string-vs-stringbuilder.png)
     
 - `String` 의 사용이 일부 코드에서 지양되는 이유
     
@@ -58,6 +58,7 @@ tb.append("c");
         s = s + n;
     }
     
+    ///////////////////////////////////
     String s = "";
     for (int i = 0; i < n; ++i) {
     	  StringBuilder sb = new StringBuilder();
@@ -157,7 +158,7 @@ public static void partyPlanning() {
 }
 ```
 
-- 전체적인 코드는 작동하지만 두가지 문제가 발생했다.
+- 전체적인 코드는 작동하지만 두가지 수정 사항이 생겼다.
     - 매번 코드에 대한 질문을 대답해야 하기에 추후에 대답을 위해서 코드를 수정한다.
         
         ```java
@@ -169,7 +170,7 @@ public static void partyPlanning() {
         private static Date groundhogAnswer = null;
         ```
         
-    - 또한 봄의 날씨가 너무 춥가도 하기에 봄의 시작일에서 한달 뒤로 코드를 수정해야한다.
+    - 봄의 날씨가 너무 춥기에 봄의 시작일에서 한달 뒤로 코드를 수정해야한다.
         
         ```java
         // somewhere else in the code...
@@ -194,7 +195,7 @@ public static void partyPlanning() {
     - `startOfSpring()` 에서 항상 복사본을 return 한다.
     - `return new Date(groundhogAnswer.getTime());`
 - 이러한 패턴을 **defensive copying** 이라고 한다.
-- 이는 추상적인 데이터 타입이며 기존의 값에 영향을 주지 않고 자유롷게 사용이 가능하다.
+- 이는 추상적인 데이터 타입이며 기존의 값에 영향을 주지 않고 자유롭게 사용이 가능하다. → 캡슐화 달성
 - 그러나 이러한 방어적 복사는 이용자가 추가적인 공간과 작업이 요구 된다. 즉 99%의 사용자가 날짜를 변경하지 않더라도 이런 오버헤드는 발생한다.
 - 불변성은 이런 오버헤드가 없다. 즉 이런 상황에서는 불변성이 더욱 이득이 되는 상황
 
@@ -203,15 +204,17 @@ public static void partyPlanning() {
 - 일반적으로 가변 객체를 지역적으로 사용하는 것은 괜찮다.
 - 하지만 다양한 객체에 **aliases** 라고 불리는 여러개의 참조를 가지는것에 문제가 있다.
     - `List` 객체를 사용하는 `sum` , `sumAbsolute` 이건 다양한 사람이 협업하는 과정에서 문제가 발생
+        
+        (한 프로그래머는 `sumAbsolute` 만을 수정하면서 `sum` 은 유지되기를 희망할 때)
+        
     - `Date` 같은 경우 `groundhogAnswer` 와 `partyDate` 를 가리키는데 이 또한 각자 같은 객체를 참조하지만 다른 곳에 위치 되어 있어 코드를 읽기 어렵게 한다.
-- 스냅샷 다이어그램을 통해 이러한 문제를 쉽게 머리에 이해할 수 있다.
 
 ## ****Specifications for mutating methods****
 
 - 가변성 있는 메소드의 수행에 대해 명세에 포함하는 것은 중요합니다.
 - 우리는 앞서 가변성이 버그의 원인이 됨을 확인하였다.
 
-```
+```java
 static void sort(List<String> lst)
 requires: nothing
 effects:  puts lst in sorted order, i.e. lst[i] <= lst[j]
@@ -220,13 +223,12 @@ effects:  puts lst in sorted order, i.e. lst[i] <= lst[j]
 
 - 가변성을 제거한 명세
 
-```
+```java
 static List<String> toLowerCase(List<String> lst)
 requires: nothing
 effects:  returns a new list t where t[i] = lst[i].toLowerCase()
 ```
 
-- 추후 암묵적으로 불변이라고 이후 허용한다.
 - 변이는 결국 끔찍한 버그로 이어지는 것을 언제나 명심할것
 
 ## ****Iterating over arrays and lists****
@@ -367,9 +369,8 @@ Iterator iter = lst.iterator();while (iter.hasNext()) {String str = iter.next();
     ```
     
     - 마지막은 실패했다.
-- 왜 틀린 답이 나왔는지는 스냅샷 다이어그램을 활용한다면 편하다.
 
-- 이건 모든 `Iterator` 를 사용하는 모든 곳에서 나타나는 문제입니다.
+- 이건 모든 `Iterator` 를 사용하는 모든 곳에서 나타나는 문제
 
 ```java
 for (String subject : subjects) {
@@ -399,7 +400,7 @@ for (String subject : subjects) {
     - 만약 같은 Iterator를 다른 프로그램이 실행중이라면..?’
 - 이 문제에 대한 스냅샷 다이어그램
     
-    ![스크린샷 2023-09-26 오후 4.04.33.png](img/kkh/img1.png)
+    ![스크린샷 2023-09-26 오후 4.04.33.png](image/kkh/img1.png)
     
 
 ## ****Mutation and contracts****
@@ -464,7 +465,7 @@ for (String subject : subjects) {
     System.out.println(id);
     ```
     
-    - 구현자는 캐쉬를 사용한다.
+    - 구현자는 캐쉬를 추가한다.
     
     ```java
     private static Map<String, char[]> cache = new HashMap<String, char[]>();
@@ -528,7 +529,7 @@ for (String subject : subjects) {
 
 ## ****Useful immutable types****
 
-- 일반적으로 immutable은 Java API에서 문제를 회피 할 수 있다.
+- 일반적으로 immutable은 다양한 문제를 피할 수 있기에, Java API에서의 일반적인 불변 유형 열거
     - primitive type, primitive는 immutable 입니다.
     - `BigInteger` , `BigDecimal` 또한 immutable 입니다.
     - mutable한 `Date` 의 사용을 지양하세요. 시간을 기록할 때 에는 `java.time` 을 사용하세요.
@@ -536,7 +537,6 @@ for (String subject : subjects) {
         - `Collections.unmodifiableList`
         - `Collections.unmodifiableSet`
         - `Collections.unmodifiableMap`
-    - `[Unsupported­Operation­Exception](http://docs.oracle.com/javase/8/docs/api/?java/lang/UnsupportedOperationException.html)` 를 활용해서 `add` , `put` 등 mutations를 방지하세요
     - mutable한 collection을 다른 프로그램에 전달하기 전에 이 collection을 수정할수 없도록 wrapper 할 수 있습니다.
     - `final` 참조는 Object에서는 수정이 가능합니다.
     - `Collections` 는 `Collections.emptyList` 를 통해서 빈 불변 리스트를 생성할 수 있습니다.
@@ -546,6 +546,6 @@ for (String subject : subjects) {
 ## Summary
 
 - mutability는 성능과 편의성에 우위를 가지지만, 버그의 위험성을 가진다. 또한 정확성을 추론하기에 높은 비용을 요구한다.
-- immutable 객체의 차이에 대해서 `Strin` 은 immutable 객체, `final` 은 불변 참조를 이해한다.
+- immutable 객체의 차이에 대해서 `String` 은 immutable 객체, `final` 은 불변 참조를 이해한다.
 - immutablility는 결과적으로 버그로부터 안전하고 이해하기 쉬우며, 변화에 준비된 것을 확인 할 수 있다.
     - 물론 비용에 대한 단점도 존재한다…
