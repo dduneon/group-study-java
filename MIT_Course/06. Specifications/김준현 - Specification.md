@@ -31,7 +31,7 @@
 
 ![Untitled](./image/dduneon/Untitled.png)
 
-- `BigInteger.add()` 에서 만약 코드의 동작에 대한 궁금증이 있었다면, 코드에서 직접 Constructure를 비롯한 다양한 메서드를 일일이 찾아봐야 했을 것임
+- `BigInteger.add()` 에서 만약 코드의 동작에 대한 궁금증이 있었다면, 코드에서 직접 Constructor를 비롯한 다양한 메서드를 일일이 찾아봐야 했을 것임
 
 - Implementor 입장에서는 사용자에게 알리지 않고 구현을 변경할 수 있는 자유를 주기 때문에, 코드를 더 빠르게 만들 수 있다
 
