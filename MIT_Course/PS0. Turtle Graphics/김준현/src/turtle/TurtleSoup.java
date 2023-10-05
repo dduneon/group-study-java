@@ -131,6 +131,7 @@ public class TurtleSoup {
             if (currentHeading >= 360)
                 currentHeading -= 360;
         }
+
         return headings;
     }
 
