@@ -198,8 +198,6 @@
         - 일분 추상 값은 둘 이상의 참조 값에 의해 mapped된다. {”abc”, “bac”} → {a, b, c}
         - 모든 참조 값이 mapped된건 아니다. {”aabbcc” → x } → 중복을 허용하지 않는다면…
             
-            ![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/1492c136-60a9-4775-bb85-d42621a8a8ec/b1988ac7-797e-4a68-a404-a1cd8b3d64fd/Untitled.png)
-            
 - 우리는 몇개의 요소와 관게를 설명한다.
     - 참조 값을 추상값에 매핑하는 추상화 함수
         
