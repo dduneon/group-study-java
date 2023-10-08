@@ -212,7 +212,7 @@ Java 컬렉션 클래스는 immutable Wrapper이라는 좋은 대안을 제공�
 
 Abstract data type의 기초가 되는 이론을 더 자세히 살펴 볼 것이다. 
 
-**ADT를 생각할 때 두 값 공간간의 관계를 고려하는 것이 도움이 된다.**
+**ADT를 생각할 때 두 값 공간간 관계를 고려하는 것이 도움이 된다.**
 
 **Rep 값의 공간은 실제 구현 엔티티의 값으로 구성된다. 간단한 경우에는 추상 유형이 단일 객체로 구현되지만 실제로는 복잡하다.**
 
@@ -225,7 +225,7 @@ public class CharSet {
 }
 ```
 
-`representation space` R에는 문자열이 포함되고 `abstract space` A에는 수학적으로 표현된 문자 집합이 포함된다. Rep 값이 나타내는 추상 값까지 괄호를 사용해서 표시 할 수 있다.
+`Representation space` R에는 문자열이 포함되고 `Abstract space` A에는 수학적으로 표현된 문자 집합이 포함된다. Rep 값이 나타내는 추상 값까지 괄호를 사용해서 표시 할 수 있다.
 
 ![http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/charset-af-ri.png](http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/charset-af-ri.png)
 
@@ -233,21 +233,23 @@ public class CharSet {
 - **몇개의 abstract value는 둘 이상의 rep value에 매핑됨 :** 이는 rep가 엄격한 인코딩이기 때문이다. 순서가 지정되지 않는 문자 집합을 문자열로 표현하는 방법은 여러가지가 있다.
 - **모든 rep value가 매핑되는 것은 아님 :** 이 경우 문자열 “abbc”는 매핑되지 않는다. 문자열에 중복된 내용이 포함되서는 안된다고 결정했다. 이렇게 하면 특정 문자의 첫 번째 인스턴스에 도달할 때 제거 메소드를 종료할 수 있다. 최대 한 개가 있을 수 있다는 것을 알고 있다.
 
-실제로 우리는 두 공간의 몇가지 요소와 관계만 설명할 수 있다. 그래프 전체는 무한하다. 그래서 두가지로 설명한다.
+실제로 우리는 두 공간의 몇가지 요소와 관계만 설명할 수 있다. 그래프 전체는 무한하다. 
+
+→ 두가지로 설명됨.
 
 1. **rep value을 대표하는 abstract value에 매핑하는 abstract function**
 
 > AF : R → A
 > 
 
-이해 안감 
+함수가 전사(호출됨)이고 전단사(일대일)일 필요는 없다. 종종 부분적이다.
 
 1. rep value을 boolean으로 매핑하는 rep invariant
 
 > RI : R → boolean
 > 
 
-이해 안감 
+Rep value r의 경우 RI(r)은 r이 AF에 의해 매핑되는 경우에만 true이다.
 
 **rep invariant와 abstract function 모두 코드에서 선언 바로 옆에 문서화 되어야 한다.**
 
@@ -267,3 +269,288 @@ public class CharSet {
 `**abstrat value space` 만으로 AF또는 RI를 결정하지 않는다. 동일한 abstract type에 대해 여러 `representation` 이 있을 수 있다. 문자 집합은 위와 같이 문자열로 표시되거나 가능한 각 문자에 대해 1비트를 사용하는 비트 벡터로 동일하게 표시될 수 있다.** 
 
 **→ 이 두가지는 매핑하는데 있어서 서로 다른 abstract function이 필요하다.**
+
+**핵심은  rep type을 정의하고 그에 따라 rep에 대한 값의 공간에 대한 값을 선택하더라도 어떤 값이 합법적으로 간주 되는지, 합법적인 값중에 어떻게 해석될지는 결정되지 않는다.**
+
+**문자열에 중복이 없다고 결정하는 대신 중복을 허용하는 동시에 문자가 감소하지 않는 순서로 정렬할 수 있게 precondition을 넣을 수 있다. 이를 통해 문자열에 대해 이진 검색을 수행할 수 있으므로 선형 시간이 아닌 log시간으로 멤버십을 확인 할 수 있다.**
+
+**다른 rep invariant**
+
+```java
+public class CharSet {
+    private String s;
+    // Rep invariant:
+    //    s[0] <= s[1] <= ... <= s[s.length()-1]
+    // Abstraction Function:
+    //   represents the set of characters found in s
+    ...
+}
+```
+
+![http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/charset-sorted.svg](http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/charset-sorted.svg)
+
+**동일한 rep value space와 동일한 rep invariant RI를 사용하더라도 서로 다른 `abstract function`(AF)를 사용하여 표현을 다르게 해석 할 수 있다.**
+
+**RI가 모든 문자열을 허용한다고 가정했을 때 위와 같이 AF를 정의하여 배열의 요소를 집합의 요소로 해석할 수 있다. 그러나 Rep가 해석을 결정하도록하는 선언은 없다.**
+
+**연속된 문자 쌍을 하위 범위로 해석하여 문자열 표현 “acgg”가 두 범위 쌍 [ac] 및 [gg]로 해석되어 집합{a,b,c,g}를 나타낼 수 있다. 해당 표현에 대한 AF 및 RI의 모습은 다음과 같다.**
+
+```java
+public class CharSet {
+    private String s;
+    // Rep invariant:
+    //    s.length is even
+    //    s[0] <= s[1] <= ... <= s[s.length()-1]
+    // Abstraction Function:
+    //   represents the union of the ranges
+    //   {s[i]...s[i+1]} for each adjacent pair of characters 
+    //   in s
+    ...
+}
+```
+
+![http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/charset-sortedrange.svg](http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/charset-sortedrange.svg)
+
+**중요한 점으로 `abstract type`를 설계한다는 것은 스펙을 위한 `abstract value space`와 구현을 위한 `rep value space`이라는 두 공간을 선택하는 것 뿐만 아니라 사용할 `rep value`와 해석하는 방법을 결정하는 것을 의미한다.**
+
+## Example: Rational Numbers
+
+**다음은 유리수에 대한 abstract date type의 예시이다.**
+
+**rep invariant와 abstraction function를 자세히 살펴보아라.**
+
+```java
+public class RatNum {
+    private final int numer;
+    private final int denom;
+
+    // Rep invariant:
+    //   denom > 0
+    //   numer/denom is in reduced form
+
+    // Abstraction Function:
+    //   represents the rational number numer / denom
+
+    /** Make a new Ratnum == n. */
+    public RatNum(int n) {
+        numer = n;
+        denom = 1;
+        checkRep();
+    }
+
+    /**
+     * Make a new RatNum == (n / d).
+     * @param n numerator
+     * @param d denominator
+     * @throws ArithmeticException if d == 0
+     */
+    public RatNum(int n, int d) throws ArithmeticException {
+        // reduce ratio to lowest terms
+        int g = gcd(n, d);
+        n = n / g;
+        d = d / g;
+
+        // make denominator positive
+        if (d < 0) {
+            numer = -n;
+            denom = -d;
+        } else {
+            numer = n;
+            denom = d;
+        }
+        checkRep();
+    }
+}
+```
+
+**이 코드에 대한 `abstraction function`과 `representation invariant` 그림이다.**
+
+![http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/ratnum-af-ri.png](http://web.mit.edu/6.005/www/fa15/classes/13-abstraction-functions-rep-invariants/figures/ratnum-af-ri.png)
+
+`**Reperesentation invariant`에서는 분자/분모 쌍이 기약분수이어야하기 때문에 (2,4) 및 (18,12)와 같은 쌍은 RI외부로 그려야한다.**
+
+**보다 허용적인 RI를 사용하여 동일한 ADT의 또 다른 구현을 설계하는 것이 완전히 합리적일 수 있다. 이러한 변경을 위해서 사용하는 비용이 많이 들 수도 있고 적게 들 수도 있다.**
+
+## Checking the Rep Invariant
+
+**representation invariant는 단지 깔끔한 수학적인 아이디어가 아니다. 구현이 런타임 시 Rep invariant를 주장하는 경우 버그를 조기에 발견 할 수 있다. RatNum의 메서드는 다음과 같다.**
+
+```java
+// Check that the rep invariant is true
+// *** Warning: this does nothing unless you turn on assertion checking
+// by passing -enableassertions to Java
+private void checkRep() {
+    assert denom > 0;
+    assert gcd(numer, denom) == 1;
+}
+```
+
+**representation을 생성하거나 변경하는 모든 작업(즉, creators(생성자) or mutates(변경자))이 끝날 때마다 `checkRep()`를 호출하여 representation invariant를 주장해야한다. 위의 RatNum 코드를 다시 보면 두 생성자의 끝에서 `checkRep()`를 호출하는 것을 볼 수 있다.**
+
+**Observer 메서드는 일반적으로 checkRep()를 호출할 필요가 없지만 어쨌든 그렇게 하는 것이 좋은 습관이다.**
+
+**→ Observer를 포함한 모든 메서드에서 checkRep()를 호출하면 rep 노출로 인한 rep invariant 위반을 포착할 가능성이 높아진다.**
+
+**checkRep는 왜 비공개인가? rep invariant를 확인하고 시행하는 책임은 구현자체에 있기때문에**
+
+## No Null Values in the Rep
+
+**null값은 문제가 많고 안전하지 않기 때문에 프로그래밍에서 완전히 제거하려고 한다고 한 적 이 있다.**
+
+**6.005에서는 메서드의 precondition과 postcondition에서 객체와 배열이 null이 아니어야 한다는 것을 암시적으로 요구한다.**
+
+**우리는 이러한 금지를 abstract data type의 표현으로 확장한다.** 
+
+```java
+class CharSet {
+    String s;
+}
+```
+
+**그러나 해당 representation invariant이 자동으로 포함되므로 `s != null` rep invariant comment에 이를 명시할 필요가 없다.**
+
+**→ checkRep() 메서드에서 여전히 검사를 해야하며 s ≠ null 일 때 올바르게 실패하는지 확인해야 한다. 하지만 다른 rep invariant를 검사하면 null인 경우 예외가 발생하기 때문에 무료로 제공해주는 경우가 많다.**
+
+```java
+private void checkRep() {
+    assert s.length() % 2 == 0;
+    ...
+}
+```
+
+**만약 s가 null이라면 `s.length()` 에서 null참조가 발생하기 때문에 실패한다.**
+
+**→ 이런식으로 별도로 확인되지 않는 경우 `s!=null` 을 명시해주어야한다.**
+
+---
+
+## ****Documenting the AF, RI, and Safety from Rep Exposure****
+
+**Rep의 private field가 선언된 바로 그 위치에 주석을 사용하여 클래스의 Abstraction fucntion과 Rep Invariant을 문서화하는 것이 좋다.**
+
+**또 다른 좋은 방법은 rep exposure safety argument이다. 이는 표현의 각 부분을 검사하고 표현의 해당 부분을 처리하는 코드를 살펴보고, 코드는 rep를 노출하지 않는다.**
+
+**Rep Invariant, abstraction function 및 rep exposure로 부터 안전한 예시 `Tweet`**
+
+```java
+// Immutable type representing a tweet.
+public class Tweet {
+
+    private final String author;
+    private final String text;
+    private final Date timestamp;
+
+    // Rep invariant:
+    //   author is a Twitter username (a nonempty string of letters, digits, underscores)
+    //   text.length <= 140
+    // Abstraction Function:
+    //   represents a tweet posted by author, with content text, at time timestamp 
+    // Safety from rep exposure:
+    //   All fields are private;
+    //   author and text are Strings, so are guaranteed immutable;
+    //   timestamp is a mutable Date, so Tweet() constructor and getTimestamp() 
+    //        make defensive copies to avoid sharing the rep's Date object with clients.
+
+    // Operations (specs and method bodies omitted to save space)
+    public Tweet(String author, String text, Date timestamp) { ... }
+    public String getAuthor() { ... }
+    public String getText() { ... }
+    public Date getTimestamp() { ... }
+}
+```
+
+**타임스탬프에 대한 rep invariant condition이 명시되지 않았다는 것을 알아둬라. (모든 객체 참조에 대해 가지고 있는 `timestamp != null` 이라는 일반적인 가정과는 별도)**
+
+**전체 유형의 `immutability` 속성은 변하지않고 남아있는 모든 필드에 따라 달라지기 때문에 `timestamp` 는 `rep exposure safety argument` 이다.**
+
+`**RatNum` 의 파라미터는 다음과 같다.**
+
+```java
+// Immutable type representing a rational number.
+public class RatNum {
+    private final int numer;
+    private final int denom;
+
+    // Rep invariant:
+    //   denom > 0
+    //   numer/denom is in reduced form, i.e. gcd(|numer|,denom) = 1
+    // Abstraction Function:
+    //   represents the rational number numer / denom
+    // Safety from rep exposure:
+    //   All fields are private, and all types in the rep are immutable.
+
+    // Operations (specs and method bodies omitted to save space)
+    public RatNum(int n) { ... }
+    public RatNum(int n, int d) throws ArithmeticException { ... }
+    ...
+}
+```
+
+`**immutable rep` 는 `rep exposure` 로 부터 안전하게 만들기 쉽다.**
+
+### How to Establish Invarian**ts**
+
+**invariant는 전체 프로그램에 적용되는 속성이다.** 
+
+**불변성을 갖고 있기 위해서 필요한 것**
+
+- 객체의 초기 상태에 invariant는 true
+- 객체에 대한 모든 변경 사항이 불변성을 true로 유지하는지 확인
+
+**ADT operation로 해석하면 다음과 같다.**
+
+- creators 그리고 producers는 새로운 객체 인스턴스에 대한 invariant를 설정해야 한다.
+- mutators와 observers는 invariant를 유지해야한다.
+
+`**rep exposure` 는 상황을 더 복잡하게 만든다. 만약 rep 가 노출된다면 객체는 ADT 작업뿐만 아니라 프로그램 어느 곳에서나 객체가 변경될 수 있으며 이러한 변경 후에도 invariant가 여전히 유지된다는 것을 보장할 수 없다.** 
+
+**Structural induction :** abstract data type의 invariant이 다음과 같은경우
+
+1. **creators와 producers가 만듬**
+2. **mutators와 observers가 유지시킨다.**
+3. **representation exposure가 발생하지 않음**
+
+**이러한 조건이 유지된다면 abstract data type의 모든 인스턴스에 invariant가 적용된다.**
+
+---
+
+## ****ADT invariants replace preconditions****
+
+**잘 설계된 abstract data type의 엄청난 장점은 precondition에서 규정해야 하는 속성을 캡슐화하고 적용한다는 것이다.**
+
+**ex) 다음과 같은 스펙 대신 정교한 precondition을 사용한다.**
+
+```java
+/** 
+ * @param set1 is a sorted set of characters with no repeats
+ * @param set2 is likewise
+ * @return characters that appear in one set but not the other,
+ *  in sorted order with no repeats 
+ */
+static String exclusiveOr(String set1, String set2);
+```
+
+원하는 속성을 캡쳐하는 ADT를 사용할 수 있다.
+
+```java
+/** @return characters that appear in one set but not the other */
+static SortedSet<Character> exclusiveOr(SortedSet<Character>  set1, SortedSet<Character> set2);
+```
+
+ADT의 이름은 프로그래머가 알아야 할 모든 것을 전달하기 때문에 이해하기 쉽다. 또한 Java static checking가 작동하고 필수 조건이 정확히 한 위치인 `SortedSet type`에서 시행될 수 있으므로 버그로부터 더 안전하다.
+
+---
+
+## Summary
+
+- **invariant은 객체의 lifetime 동안 ADT 인스턴스에 대해 항상 적용되는 속성이다.**
+- **좋은 ADT는 자체적으로 invariant를 유지한다. creators과 producers가 설정해야하며 observers와 mutators가 보존해야한다.**
+- **rep invariant는 유효한 값을 지정하며 런타임시 `checkRep()`를 사용하여 확인해야한다.**
+- **abstraction function은 representation을 그것이 나타내는 abstract value에 매핑한다.**
+- **rep exposure는 `abstraction function` 과 `invariant preservation` 둘 다 위협한다.**
+
+**SFB :** 좋은 ADT는 자체적으로 invariant를 유지하므로 ADT 클라이언트의 버그에 덜 취약하고 ADT자체 구현 내에서 쉽게 격리될 수 있다. rep invariant을 명시적으로 지정하고 `checkRep()`를 사용하여 런타임에 이를 확인하면 손상된 데이터 구조를 사용하지 않고 fail fast가 가능하다.
+
+**ETU** : Rep invariant과 abstraction function는 데이터의 의미와 그것이 추상화와 어떻게 관련되는지를 설명한다.
+
+**RFC** : abstract data type은 추상화를 구체적인 표현과 분리하므로 클라이언트 코드를 변경하지 않고도 표현을 변경할 수 있다.
