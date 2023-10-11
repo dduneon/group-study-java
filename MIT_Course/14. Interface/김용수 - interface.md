@@ -262,7 +262,7 @@ public interface Set<E> {
 
 첫 번째 ADT 읽기에서 ADT 개념의 Java 도구 상자를 확장 할 수 있다.
 
-![Untitled](./img/Untitled.png)
+![Untitled](./img/kys/Untitled.png)
 
 ---
 
